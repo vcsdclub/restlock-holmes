@@ -1,4 +1,4 @@
-# RESTlock Holmes 🔍
+# API Mystery Hunt 🔍
 
 An educational escape room experience that teaches developers how to read documentation and work with APIs through puzzle-solving.
 
