@@ -14,72 +14,83 @@ This creates a progressive mystery hunt experience!
 
 ## Adding to the list
 
-To add a new mystery to the game, edit the `mysteries.yaml` file in the root directory. Each mystery follows this structure:
+To add a new mystery to the game, edit the `src/lib/assets/mysteries.yaml` file.
+
+**Important:** The file has a `mysteries:` root key containing an array of mystery objects. When adding a new mystery, add it to the array under the `mysteries:` key (see the example below).
+
+Each mystery follows this structure:
 
 ```yaml
-- id: myst_XXX              # Unique identifier (use next number in sequence)
-  title: "Mystery Title"    # Catchy, engaging title
-  difficulty: easy          # easy, medium, or hard
-  scenario: "Story text"    # The narrative/context for the mystery
-  clues:                    # Array of clues - each leads to the next!
-    - id: clue_001
-      text: "First clue text"
-      apiHint: "Which API to use with a link to docs"
-      answer: "answer_to_clue_1"  # Answer unlocks next clue
-      hints:                # Hints specific to THIS clue (unlimited)
-        - "First hint (vague)"
-        - "Second hint (more specific)"
-        - "Third hint (very specific)"
-    - id: clue_002
-      text: "Second clue text (only shown after solving clue 1)"
-      apiHint: "API hint for second clue"
-      answer: "answer_to_clue_2"
-      hints:
-        - "Hint for clue 2"
-        - "More specific hint for clue 2"
-    - id: clue_003
-      text: "Final clue text"
-      apiHint: "API hint for final clue"
-      answer: "final_answer"       # Solving this shows conclusion
-      hints:
-        - "Final clue hint"
-        - "Very specific guidance"
-  conclusion: "The ending story/message when all clues are solved"
+mysteries:
+  - id: myst_XXX              # Unique identifier (use next number in sequence)
+    title: "Mystery Title"    # Catchy, engaging title
+    difficulty: easy          # easy, medium, or hard
+    scenario: "Story text"    # The narrative/context for the mystery
+    clues:                    # Array of clues - each leads to the next!
+      - id: clue_001
+        text: "First clue text"
+        apiHint: "Which API to use with a link to docs"
+        answer: "answer_to_clue_1"  # Answer unlocks next clue
+        hints:                # Hints specific to THIS clue (unlimited)
+          - "First hint (vague)"
+          - "Second hint (more specific)"
+          - "Third hint (very specific)"
+      - id: clue_002
+        text: "Second clue text (only shown after solving clue 1)"
+        apiHint: "API hint for second clue"
+        answer: "answer_to_clue_2"
+        hints:
+          - "Hint for clue 2"
+          - "More specific hint for clue 2"
+      - id: clue_003
+        text: "Final clue text"
+        apiHint: "API hint for final clue"
+        answer: "final_answer"       # Solving this shows conclusion
+        hints:
+          - "Final clue hint"
+          - "Very specific guidance"
+    conclusion: "The ending story/message when all clues are solved"
 ```
 
 ### Example Mystery
 
+When adding to the existing `src/lib/assets/mysteries.yaml` file, simply add your new mystery to the list under the `mysteries:` key:
+
 ```yaml
-- id: myst_004
-  title: "The API Detective"
-  difficulty: medium
-  scenario: "A mysterious developer left clues in JSONPlaceholder. Follow the breadcrumbs..."
-  clues:
-    - id: clue_001
-      text: "Find post #42 and tell me the userId. Who posted it?"
-      apiHint: "Use JSONPlaceholder API (https://jsonplaceholder.typicode.com/)"
-      answer: "5"
-      hints:
-        - "Use the /posts endpoint with post ID"
-        - "Try: https://jsonplaceholder.typicode.com/posts/42"
-        - "Look for the 'userId' field in the JSON response"
-    - id: clue_002
-      text: "Great! Now find user #5's email domain (the part after @). What is it?"
-      apiHint: "Use the /users endpoint to get user details"
-      answer: "biz"
-      hints:
-        - "Fetch user details: /users/5"
-        - "Look at the 'email' field"
-        - "Extract everything after the @ symbol"
-    - id: clue_003
-      text: "Perfect! Now count how many todos user #5 has completed. What's the number?"
-      apiHint: "Use the /todos endpoint with userId parameter"
-      answer: "12"
-      hints:
-        - "Use: /todos?userId=5&completed=true"
-        - "Count the number of items in the returned array"
-        - "The answer is the array length"
-  conclusion: "Excellent work, detective! You've traced the developer's digital footprints through JSONPlaceholder. User #5 was indeed the key to unlocking this mystery!"
+mysteries:
+  # ... existing mysteries (myst_001, myst_002, myst_003) ...
+
+  # Add your new mystery here:
+  - id: myst_004
+    title: "The API Detective"
+    difficulty: medium
+    scenario: "A mysterious developer left clues in JSONPlaceholder. Follow the breadcrumbs..."
+    clues:
+      - id: clue_001
+        text: "Find post #42 and tell me the userId. Who posted it?"
+        apiHint: "Use JSONPlaceholder API (https://jsonplaceholder.typicode.com/)"
+        answer: "5"
+        hints:
+          - "Use the /posts endpoint with post ID"
+          - "Try: https://jsonplaceholder.typicode.com/posts/42"
+          - "Look for the 'userId' field in the JSON response"
+      - id: clue_002
+        text: "Great! Now find user #5's email domain (the part after @). What is it?"
+        apiHint: "Use the /users endpoint to get user details"
+        answer: "biz"
+        hints:
+          - "Fetch user details: /users/5"
+          - "Look at the 'email' field"
+          - "Extract everything after the @ symbol"
+      - id: clue_003
+        text: "Perfect! Now count how many todos user #5 has completed. What's the number?"
+        apiHint: "Use the /todos endpoint with userId parameter"
+        answer: "12"
+        hints:
+          - "Use: /todos?userId=5&completed=true"
+          - "Count the number of items in the returned array"
+          - "The answer is the array length"
+    conclusion: "Excellent work, detective! You've traced the developer's digital footprints through JSONPlaceholder. User #5 was indeed the key to unlocking this mystery!"
 ```
 
 ## Writing good mysteries
