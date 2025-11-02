@@ -1,110 +1,121 @@
 # RESTlock Holmes 🔍
 
-An educational escape room experience that teaches developers how to read documentation and work with APIs through puzzle-solving.
+*Elementary, my dear developer—the game is afoot!*
 
-## Overview
+Learn APIs the fun way: by solving mysteries with code. RESTlock Holmes is an interactive puzzle game where you play detective, using real APIs to crack cases and uncover clues.
 
-API Mystery Hunt is an interactive learning platform built with [Elysia](https://elysiajs.com/) that challenges students to solve mysteries by reading API documentation and writing code to extract information from various APIs. Unlike traditional tutorials, this project emphasizes real-world skills: understanding documentation, making API calls, and processing data programmatically.
+## What Is This?
 
-## The Concept
-
-Students are presented with mystery scenarios where clues point them toward specific APIs (both internal and external). To solve each clue, they must:
-
-1. **Read the documentation** of the API hinted by the clue to understand which endpoint to use
-2. **Write code** to query the API with the right parameters
-3. **Process the data** programmatically to find the answer
-
-The clues are designed so that answers **cannot** be simply Googled or manually searched: they require programmatic solutions.
-
-## Example Challenge
-
-**Clue:** "Find the second evolution of a rock-type Pokémon whose name ends in 'dore'. Your answer is the sum of all game_indices for this Pokémon."
-
-**Solution approach:**
-- Read [PokéAPI documentation](https://pokeapi.co/docs/v2)
-- Use filtering to find rock-type Pokémon
-- Identify the correct evolution chain
-- Fetch the Pokémon's data
-- Write code to sum the `game_indices` values
-
-This can't be Googled because it requires:
-- Requires API-specific data processing
-- Multiple API calls or complex filtering
-- Programmatic calculation
+RESTlock Holmes is an educational escape room built with [Elysia](https://elysiajs.com/) that teaches you API skills through mystery-solving. Instead of boring tutorials, you'll learn by doing: reading real documentation, making API calls, and processing data to solve puzzles that can't just be simply Googled.
 
 ## How It Works
 
-### Internal APIs (Built with Elysia)
+You're given mystery cases with clues that hint at external APIs. To crack each case:
 
-Our platform provides several endpoints:
+1. **Think** - Figure out which API endpoint you need
+2. **Read the docs** — Read the documentation for the API you need
+3. **Write code** — Query the API with the right parameters
+4. **Process the data** — Extract and calculate your answer programmatically
 
-- **Get Mystery Jobs**: Fetch new mystery scenarios to solve
-- **Get Clues**: Retrieve clues for active mysteries
-- **Verify Answers**: Submit solutions to check if they're correct
+No shortcuts: answers are designed to be impossible to Google. You *must* write code to solve them.
 
-These endpoints are documented using OpenAPI specifications, teaching students to work with API documentation from the start.
+## Example Mystery
 
-### External APIs
+**Clue:** *"Find the second evolution of a rock-type Pokémon whose name ends in 'dore'. Your answer is the sum of all game_indices for this Pokémon."*
 
-Clues direct students to various public APIs such as:
-- [PokéAPI](https://pokeapi.co/) - Pokémon data
-- [REST Countries](https://restcountries.com/) - Country information
-- [Open Library](https://openlibrary.org/developers/api) - Book data
+**Why you can't just Google this:**
+- The answer requires filtering hundreds of Pokémon
+- You need to chain multiple API calls
+- The final answer is a calculated value, not something you can look up
+
+**What you'll need to do to crack the clue:**
+1. Read the [PokéAPI docs](https://pokeapi.co/docs/v2)
+2. Filter rock-type Pokémon programmatically
+3. Find the right evolution chain
+4. Fetch that Pokémon's data
+5. Sum the `game_indices` values in code
+
+See? No escaping the code.
+
+## The APIs
+
+### RESTlock Holmes API (Your Game Server)
+
+The game itself is an API you'll interact with:
+
+- `GET /mystery` — Fetch a new mystery case
+- `GET /hint` — Get hints when you're stuck
+- `POST /submit` — Submit your answers
+
+All endpoints are documented with OpenAPI specs at `/openapi`, so you learn to read real API docs from the start.
+
+### External APIs (The Evidence)
+
+Mysteries send you hunting through real public APIs:
+- [PokéAPI](https://pokeapi.co/) — Pokémon data
+- [REST Countries](https://restcountries.com/) — Country info
+- [Dog CEO](https://dog.ceo/dog-api/) — Dog breeds
+- [Open Library](https://openlibrary.org/developers/api) — Book data
 - And more...
 
-## Learning Objectives
+## What You'll Learn
 
-Students will learn to:
+Real skills developers use every day:
 
-- 📖 **Read and interpret API documentation** (including OpenAPI specs)
-- 🔌 **Make HTTP requests** to various APIs
-- 🔍 **Use query parameters and filters** effectively
-- 💻 **Write code to process API responses**
-- 🧩 **Solve problems programmatically** rather than manually
-- 🔗 **Work with multiple APIs** in a single solution
-
-## Clue Design Principles
-
-Effective clues should only be feasible when the player uses the API as intended. Here are some ideas for how this can be achieved:
-
-1. Require large search spaces (forcing filtering or programmatic searching)
-2. Need API-specific IDs
-3. Require chaining multiple API calls for a large search space (too tedious to do by hand)
-4. Involve data transformation (answers require calculations or aggregations)
-
-## Tech Stack
-
-- **[Elysia](https://elysiajs.com/)** - Fast and ergonomic web framework for Bun
-- **OpenAPI** - Auto-generated API documentation for clues, mysteries, and verification, to simulate actual documentation.
-- **Bun** - JavaScript runtime
+- **Reading API docs** — OpenAPI specs, REST endpoints, parameters
+- **Making HTTP requests** — GET, POST, query strings, headers
+- **Processing JSON** — Parse responses, extract data, transform values
+- **Problem solving** — Chain API calls, filter results, calculate answers
+- **Real-world workflows** — The exact process you'd use on the job
 
 ## Getting Started
 
 ```bash
+# Clone the repository
+git clone https://github.com/vcsdclub/restlock-holmes.git
+
 # Install dependencies
 bun install
 
-# Start the development server
+# Start the server
 bun run dev
 
-# The API will be available at http://localhost:3000
+# API runs at http://localhost:3000
+# Docs at http://localhost:3000/openapi
 ```
 
-## API Documentation
+Then visit `http://localhost:3000` for tutorials and examples, or jump straight to `GET /mystery` to start your first case.
 
-Once running, visit `http://localhost:3000/swagger` to view the interactive API documentation.
+## Creating Good Mysteries
+
+Want to contribute puzzles? Effective clues force players to use APIs properly. Here's how:
+
+1. **Large search spaces** — Make manual searching impossible (e.g., "filter 1000+ items")
+2. **Calculated answers** — Require aggregations, sums, or transformations
+3. **Chained API calls** — Need data from multiple endpoints
+4. **API-specific IDs** — Force players to query, not guess
+
+## Tech Stack
+
+- **[Bun](https://bun.sh/)** — Lightning-fast JavaScript runtime
+- **[Elysia](https://elysiajs.com/)** — Ergonomic web framework
+- **OpenAPI 3.0** — Auto-generated docs (just like real APIs)
+
+## Why This Works
+
+Most API tutorials are boring. You follow step-by-step instructions, copy code, and learn nothing.
+
+RESTlock Holmes is different. You have a *goal* (solve the mystery), and the API is your *tool*. When you need something, you figure it out. That's how real developers work.
+
+The best way to learn isn't through tutorials—it's through **necessity**.
 
 ## Contributing
 
-Ideas for new mysteries and clues are welcome! When designing puzzles, ensure they:
-- Cannot be solved by simple Google searches
-- Require reading specific API documentation
-- Need programmatic solutions (not manual data browsing)
-- Teach valuable real-world skills
-
-## Philosophy
-
-The best way to learn APIs isn't through tutorials—it's through **necessity**. By creating engaging mysteries that can only be solved through proper API usage, students develop the critical skill of reading documentation and applying it to real problems.
+Got ideas for mysteries? Open a PR! Good puzzles:
+- Can't be solved by Googling
+- Require reading API docs
+- Need code to solve (no manual browsing)
+- Teach real skills
 
 ---
 
