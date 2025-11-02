@@ -15,7 +15,7 @@ interface TestResult {
 
 describe('Mystery 005: The Continental Capitals', () => {
 	let mystery: any;
-	let results: TestResult[] = [];
+	const results: TestResult[] = [];
 
 	beforeAll(async () => {
 		// Get the mystery

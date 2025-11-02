@@ -5,6 +5,7 @@ This directory contains test files that also serve as example solutions for each
 ## Running Tests
 
 Make sure the server is running first:
+
 ```bash
 bun run dev
 ```
@@ -23,6 +24,7 @@ Each test file demonstrates the complete solution for a mystery.
 ## How Tests Work
 
 Each test file:
+
 1. Fetches the mystery from the API
 2. Solves each clue step-by-step by calling external APIs
 3. Submits answers to verify correctness

@@ -15,7 +15,7 @@ interface TestResult {
 
 describe('Mystery 004: The Interdimensional Character Count', () => {
 	let mystery: any;
-	let results: TestResult[] = [];
+	const results: TestResult[] = [];
 
 	beforeAll(async () => {
 		// Get the mystery

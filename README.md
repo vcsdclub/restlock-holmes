@@ -1,6 +1,6 @@
 # RESTlock Holmes 🔍
 
-*Elementary, my dear developer—the game is afoot!*
+_Elementary, my dear developer—the game is afoot!_
 
 Learn APIs the fun way: by solving mysteries with code. RESTlock Holmes is an interactive puzzle game where you play detective, using real APIs to crack cases and uncover clues.
 
@@ -17,18 +17,20 @@ You're given mystery cases with clues that hint at external APIs. To crack each 
 3. **Write code** — Query the API with the right parameters
 4. **Process the data** — Extract and calculate your answer programmatically
 
-No shortcuts: answers are designed to be impossible to Google. You *must* write code to solve them.
+No shortcuts: answers are designed to be impossible to Google. You _must_ write code to solve them.
 
 ## Example Mystery
 
-**Clue:** *"Find the second evolution of a rock-type Pokémon whose name ends in 'dore'. Your answer is the sum of all game_indices for this Pokémon."*
+**Clue:** _"Find the second evolution of a rock-type Pokémon whose name ends in 'dore'. Your answer is the sum of all game_indices for this Pokémon."_
 
 **Why you can't just Google this:**
+
 - The answer requires filtering hundreds of Pokémon
 - You need to chain multiple API calls
 - The final answer is a calculated value, not something you can look up
 
 **What you'll need to do to crack the clue:**
+
 1. Read the [PokéAPI docs](https://pokeapi.co/docs/v2)
 2. Filter rock-type Pokémon programmatically
 3. Find the right evolution chain
@@ -52,6 +54,7 @@ All endpoints are documented with OpenAPI specs at `/openapi`, so you learn to r
 ### External APIs (The Evidence)
 
 Mysteries send you hunting through real public APIs:
+
 - [PokéAPI](https://pokeapi.co/) — Pokémon data
 - [REST Countries](https://restcountries.com/) — Country info
 - [Dog CEO](https://dog.ceo/dog-api/) — Dog breeds
@@ -105,13 +108,14 @@ Want to contribute puzzles? Effective clues force players to use APIs properly. 
 
 Most API tutorials are boring. You follow step-by-step instructions, copy code, and learn nothing.
 
-RESTlock Holmes is different. You have a *goal* (solve the mystery), and the API is your *tool*. When you need something, you figure it out. That's how real developers work.
+RESTlock Holmes is different. You have a _goal_ (solve the mystery), and the API is your _tool_. When you need something, you figure it out. That's how real developers work.
 
 The best way to learn isn't through tutorials—it's through **necessity**.
 
 ## Contributing
 
 Got ideas for mysteries? Open a PR! Good puzzles:
+
 - Can't be solved by Googling
 - Require reading API docs
 - Need code to solve (no manual browsing)
@@ -119,4 +123,4 @@ Got ideas for mysteries? Open a PR! Good puzzles:
 
 ---
 
-*"The mystery is not in the answer, but in knowing which question to ask the API."*
+_"The mystery is not in the answer, but in knowing which question to ask the API."_

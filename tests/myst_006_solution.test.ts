@@ -15,7 +15,7 @@ interface TestResult {
 
 describe('Mystery 006: The Random Identity Generator', () => {
 	let mystery: any;
-	let results: TestResult[] = [];
+	const results: TestResult[] = [];
 
 	beforeAll(async () => {
 		// Get the mystery

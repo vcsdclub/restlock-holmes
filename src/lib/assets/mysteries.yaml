@@ -177,10 +177,10 @@ mysteries:
           - 'It is a 2-letter country code.'
       - id: clue_003
         text: "Perfect! Now count the total number of characters in the user's full name (first name + last name, no spaces). What's your count?"
-        apiHint: "Concatenate the first and last name from the name object, remove spaces, and count."
+        apiHint: 'Concatenate the first and last name from the name object, remove spaces, and count.'
         answer: '11'
         hints:
-          - "Get the name.first and name.last from the user object."
+          - 'Get the name.first and name.last from the user object.'
           - 'Combine them without spaces and count the letters.'
           - 'For seed mystery006, you should get a specific count.'
     conclusion: "Outstanding work, detective! You've successfully reverse-engineered the random identity pattern. The agent's cover has been blown!"
