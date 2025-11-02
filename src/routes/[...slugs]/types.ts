@@ -12,8 +12,7 @@ export interface Mystery {
 	title: string;
 	difficulty: Difficulty;
 	scenario: string;
-	currentClue: Clue; // Only show the current clue
-	// currentClueIndex: number;
+	firstClue: Clue;
 	totalClues: number;
 	createdAt: string;
 }
@@ -37,7 +36,6 @@ export type SubmitResponse =
 			mysterySolved: false;
 			message: "Correct! Here's your next clue...";
 			mysteryId: string;
-			clueId: string;
 			nextClue: Clue;
 	  }
 	| {
@@ -45,7 +43,6 @@ export type SubmitResponse =
 			mysterySolved: true;
 			message: "Correct! You've solved the entire mystery!";
 			mysteryId: string;
-			clueId: string;
 			conclusion: string;
 	  }
 	| {
@@ -53,7 +50,6 @@ export type SubmitResponse =
 			mysterySolved: false;
 			message: 'Not quite right. Try again, or request a hint!';
 			mysteryId: string;
-			clueId: string;
 	  };
 
 export interface ApiError {

@@ -14,7 +14,7 @@ export async function getMystery(mysteryId: string) {
 	expect(mystery.mysteryId).toBe(mysteryId);
 	expect(mystery.title).toBeDefined();
 	expect(mystery.scenario).toBeDefined();
-	expect(mystery.currentClue).toBeDefined();
+	expect(mystery.firstClue).toBeDefined();
 	return mystery as NonNullable<typeof mystery>;
 }
 

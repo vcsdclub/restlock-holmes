@@ -9,7 +9,7 @@ const POKEAPI_BASE = 'https://pokeapi.co/api/v2';
 
 describe.serial('Mystery 001: The Evolved Enigma', async () => {
 	let mystery = await getMystery('myst_001');
-	let currentClue = mystery.currentClue.id;
+	let currentClue = mystery.firstClue.id;
 
 	it('should solve clue 1: find rock-type Pokemon ending in "dore" with 7 letters', async () => {
 		// Fetch rock-type Pokemon

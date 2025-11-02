@@ -31,9 +31,10 @@ RESTlock Holmes presents you with mystery cases. Each mystery contains a chain o
 
 **Quick Start:**
 1. GET \`/mystery\` to receive your first case
-2. Read the \`currentClue.text\` and \`apiHint\`
+2. Read the \`firstClue.text\` and \`apiHint\`
 3. Query the suggested external API to find the answer
 4. POST \`/submit\` with your answer
+6. Your next clue will be in the \`nextclue\` of the response
 5. Repeat until \`mysterySolved: true\`
 
 **Need help?** Use GET \`/hint\` to get progressive hints for any clue.
@@ -137,8 +138,8 @@ This API teaches you:
 
 **Workflow:**
 1. Call this endpoint to start a new mystery
-2. Save the \`mysteryId\` and \`currentClue.id\` - you'll need them for subsequent requests
-3. Read the \`currentClue.text\` and \`apiHint\` to understand what to find
+2. Save the \`mysteryId\` and \`firstClue.id\` - you'll need them for subsequent requests
+3. Read the \`firstClue.text\` and \`apiHint\` to understand what to find
 4. Use external APIs to gather data and determine your answer
 5. Submit your answer via POST /submit`,
 				externalDocs: {
@@ -169,13 +170,13 @@ This API teaches you:
 							description: 'Difficulty level of this mystery'
 						}),
 						scenario: t.String({ description: 'Background story and context for the mystery' }),
-						currentClue: t.Object({
+						firstClue: t.Object({
 							id: t.String({ description: 'Unique identifier for this clue' }),
 							text: t.String({ description: 'The clue text describing what you need to find' }),
 							apiHint: t.String({ description: 'Hint about which external API to use' }),
 							hintsAvailable: t.Number({ description: 'Number of hints available for this clue' })
 						}),
-						// currentClueIndex: t.Number({ description: 'Zero-based index of the current clue' }),
+						// firstClueIndex: t.Number({ description: 'Zero-based index of the current clue' }),
 						totalClues: t.Number({ description: 'Total number of clues in this mystery' }),
 						createdAt: t.String({
 							description: 'ISO 8601 timestamp of when this mystery was created'
@@ -190,13 +191,12 @@ This API teaches you:
 								difficulty: 'easy',
 								scenario:
 									"A rare Pokemon has gone missing from Professor Oak's lab. Use your API skills to track it down!",
-								currentClue: {
+								firstClue: {
 									id: 'clue-1',
 									text: 'Find out how many game appearances Pikachu has made',
 									apiHint: 'Try the PokeAPI at pokeapi.co',
 									hintsAvailable: 3
 								},
-								// currentClueIndex: 0,
 								totalClues: 3,
 								createdAt: '2025-11-01T12:00:00.000Z'
 							}
@@ -402,7 +402,6 @@ This API teaches you:
 						correct: true,
 						message: "Correct! You've solved the entire mystery!",
 						mysteryId,
-						clueId,
 						mysterySolved: true,
 						conclusion: conclusion || 'Congratulations on solving the mystery!'
 					} satisfies SubmitResponse;
@@ -413,7 +412,6 @@ This API teaches you:
 						correct: true,
 						message: "Correct! Here's your next clue...",
 						mysteryId,
-						clueId,
 						nextClue,
 						mysterySolved: false
 					} satisfies SubmitResponse;
@@ -423,7 +421,6 @@ This API teaches you:
 					correct: false,
 					message: 'Not quite right. Try again, or request a hint!',
 					mysteryId,
-					clueId,
 					mysterySolved: false
 				} satisfies SubmitResponse;
 			}
@@ -448,7 +445,7 @@ This API teaches you:
 1. Get a mystery and extract mysteryId and clueId
 2. Solve the clue by querying external APIs
 3. Submit your answer to this endpoint
-4. If correct, save the new clueId and continue with the next clue
+4. If correct, save the new \`nextClue\` and continue with the next clue
 5. Repeat until mysterySolved is true`
 			},
 			body: t.Object(
@@ -480,7 +477,6 @@ This API teaches you:
 							correct: t.Literal(true, { description: 'Answer was correct' }),
 							message: t.String({ description: 'Success message' }),
 							mysteryId: t.String({ description: 'The mystery ID' }),
-							clueId: t.String({ description: 'The clue ID that was answered' }),
 							mysterySolved: t.Literal(false, { description: 'Mystery is not yet complete' }),
 							nextClue: t.Object({
 								id: t.String({ description: 'ID of the next clue' }),
@@ -494,7 +490,6 @@ This API teaches you:
 							correct: t.Literal(true, { description: 'Answer was correct' }),
 							message: t.String({ description: 'Success message' }),
 							mysteryId: t.String({ description: 'The mystery ID' }),
-							clueId: t.String({ description: 'The final clue ID that was answered' }),
 							mysterySolved: t.Literal(true, { description: 'Mystery has been solved' }),
 							conclusion: t.String({ description: 'The mystery conclusion and resolution' })
 						}),
@@ -503,7 +498,6 @@ This API teaches you:
 							correct: t.Literal(false, { description: 'Answer was incorrect' }),
 							message: t.String({ description: 'Encouragement message' }),
 							mysteryId: t.String({ description: 'The mystery ID' }),
-							clueId: t.String({ description: 'The clue ID that was attempted' }),
 							mysterySolved: t.Literal(false, { description: 'Mystery is not solved yet' })
 						})
 					],
@@ -608,7 +602,7 @@ const response = await fetch('http://localhost:3000/mystery');
 const mystery = await response.json();
 
 console.log(mystery.title);
-console.log(mystery.currentClue.text);
+console.log(mystery.firstClue.text);
 // Save mysteryId and clueId - you'll need them!`
 					},
 
@@ -631,7 +625,7 @@ const submitResponse = await fetch('http://localhost:3000/submit', {
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
     mysteryId: mystery.mysteryId,
-    clueId: mystery.currentClue.id,
+    clueId: mystery.firstClue.id,
     answer: answer
   })
 });
@@ -649,14 +643,14 @@ if (result.correct && result.nextClue) {
 						description: "Optional: Get a hint if you're stuck",
 						code: toCode`// Get the first hint (no index parameter)
 const hintResponse = await fetch(
-  \`http://localhost:3000/hint?mysteryId=\${mystery.mysteryId}&clueId=\${mystery.currentClue.id}\`
+  \`http://localhost:3000/hint?mysteryId=\${mystery.mysteryId}&clueId=\${mystery.firstClue.id}\`
 );
 const hintData = await hintResponse.json();
 console.log('Hint:', hintData.hint);
 
 // Get a specific hint by index (e.g., second hint)
 const hint2Response = await fetch(
-  \`http://localhost:3000/hint?mysteryId=\${mystery.mysteryId}&clueId=\${mystery.currentClue.id}&index=1\`
+  \`http://localhost:3000/hint?mysteryId=\${mystery.mysteryId}&clueId=\${mystery.firstClue.id}&index=1\`
 );
 const hint2Data = await hint2Response.json();
 console.log('Hint 2:', hint2Data.hint);`
@@ -671,10 +665,10 @@ console.log('Hint 2:', hint2Data.hint);`
     .then(r => r.json());
 
   console.log('Mystery:', mystery.title);
-  console.log('Clue:', mystery.currentClue.text);
+  console.log('Clue:', mystery.firstClue.text);
 
   // 2. Use the clue's apiHint to figure out which external API to use
-  console.log('API Hint:', mystery.currentClue.apiHint);
+  console.log('API Hint:', mystery.firstClue.apiHint);
 
   // 3. Query external API (example with Dog API)
   const dogData = await fetch('https://dog.ceo/api/breeds/list/all')
@@ -689,7 +683,7 @@ console.log('Hint 2:', hint2Data.hint);`
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       mysteryId: mystery.mysteryId,
-      clueId: mystery.currentClue.id,
+      clueId: mystery.firstClue.id,
       answer: answer
     })
   }).then(r => r.json());

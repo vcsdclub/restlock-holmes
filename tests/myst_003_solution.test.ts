@@ -9,7 +9,7 @@ const JSON_API_BASE = 'https://jsonplaceholder.typicode.com';
 
 describe.serial('Mystery 003: The JSONPlaceholder Puzzle', async () => {
 	let mystery = await getMystery('myst_003');
-	let currentClue = mystery.currentClue.id;
+	let currentClue = mystery.firstClue.id;
 
 	it('should solve clue 1: get userId from post #50', async () => {
 		const postRes = await fetch(`${JSON_API_BASE}/posts/50`);

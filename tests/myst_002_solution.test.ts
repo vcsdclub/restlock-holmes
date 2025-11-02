@@ -10,7 +10,7 @@ const DOG_API_BASE = 'https://dog.ceo/api';
 
 describe.serial('Mystery 002: The Dog Breed Mystery', async () => {
 	let mystery = await getMystery('myst_002');
-	let currentClue = mystery.currentClue.id;
+	let currentClue = mystery.firstClue.id;
 
 	it('should solve clue 1: count hound sub-breeds', async () => {
 		const breedsRes = await fetch(`${DOG_API_BASE}/breeds/list/all`);

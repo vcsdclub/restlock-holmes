@@ -47,13 +47,12 @@ class MysteryStore {
 			title: mysteryData.title,
 			difficulty: mysteryData.difficulty,
 			scenario: mysteryData.scenario,
-			currentClue: {
+			firstClue: {
 				id: firstClue.id,
 				text: firstClue.text,
 				apiHint: firstClue.apiHint,
 				hintsAvailable: firstClue.hints.length
 			},
-			// currentClueIndex: 0,
 			totalClues: mysteryData.clues.length,
 			createdAt: new Date().toISOString()
 		};
