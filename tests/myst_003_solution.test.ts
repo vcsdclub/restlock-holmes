@@ -1,5 +1,5 @@
 /**
- * Vitest Unit Tests for Mystery 003: The JSONPlaceholder Puzzle
+ * Unit Tests for Mystery 003: The JSONPlaceholder Puzzle
  */
 
 import { describe, it, expect, beforeAll } from 'bun:test';
@@ -13,17 +13,11 @@ interface TestResult {
 	correct: boolean;
 }
 
-describe('Mystery 003: The JSONPlaceholder Puzzle', () => {
-	let mystery: any;
+describe.serial('Mystery 003: The JSONPlaceholder Puzzle', async () => {
+	let mystery = await (
+		await app.handle(new Request('http://localhost/mystery?mysteryId=myst_003'))
+	).json();
 	let results: TestResult[] = [];
-
-	beforeAll(async () => {
-		// Get the mystery with easy difficulty
-		const mysteryRes = await app.handle(new Request('http://localhost/mystery?mysteryId=myst_003'));
-		const mysteryData = await mysteryRes.json();
-
-		mystery = mysteryData;
-	});
 
 	it('should fetch the correct mystery (myst_003)', () => {
 		expect(mystery).toBeDefined();

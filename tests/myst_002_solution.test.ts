@@ -1,5 +1,5 @@
 /**
- * Vitest Unit Tests for Mystery 002: The Dog Breed Mystery
+ * Unit Tests for Mystery 002: The Dog Breed Mystery
  */
 
 import { describe, it, expect, beforeAll } from 'bun:test';
@@ -13,16 +13,11 @@ interface TestResult {
 	correct: boolean;
 }
 
-describe('Mystery 002: The Dog Breed Mystery', () => {
-	let mystery: any;
+describe.serial('Mystery 002: The Dog Breed Mystery', async () => {
+	let mystery = await (
+		await app.handle(new Request('http://localhost/mystery?mysteryId=myst_002'))
+	).json();
 	let results: TestResult[] = [];
-
-	beforeAll(async () => {
-		// Get the mystery with easy difficulty
-		const mysteryRes = await app.handle(new Request('http://localhost/mystery?mysteryId=myst_002'));
-		const mysteryData = await mysteryRes.json();
-		mystery = mysteryData;
-	});
 
 	it('should fetch the correct mystery (myst_002)', () => {
 		expect(mystery).toBeDefined();

@@ -2,35 +2,14 @@
  * Vitest Unit Tests for Mystery 001: The Evolved Enigma
  */
 
-import { describe, it, expect, beforeAll } from 'bun:test';
-import app from '../src/routes/[...slugs]/index.ts';
+import { describe, it, expect, beforeAll, beforeEach } from 'bun:test';
+import { getMystery, submitAnswer, submitFinalAnswer } from './utils';
 
 const POKEAPI_BASE = 'https://pokeapi.co/api/v2';
 
-interface TestResult {
-	clueId: string;
-	answer: string;
-	correct: boolean;
-	message: string;
-}
-
-describe('Mystery 001: The Evolved Enigma', () => {
-	let mystery: any;
-	let results: TestResult[] = [];
-
-	beforeAll(async () => {
-		// Get the mystery
-		const mysteryRes = await app.handle(new Request('http://localhost/mystery?mysteryId=myst_001'));
-		mystery = await mysteryRes.json();
-	});
-
-	it('should fetch the mystery successfully', () => {
-		expect(mystery).toBeDefined();
-		expect(mystery.mysteryId).toBe('myst_001');
-		expect(mystery.title).toBeDefined();
-		expect(mystery.scenario).toBeDefined();
-		expect(mystery.currentClue).toBeDefined();
-	});
+describe.serial('Mystery 001: The Evolved Enigma', async () => {
+	let mystery = await getMystery('myst_001');
+	let currentClue = mystery.currentClue.id;
 
 	it('should solve clue 1: find rock-type Pokemon ending in "dore" with 7 letters', async () => {
 		// Fetch rock-type Pokemon
@@ -43,127 +22,27 @@ describe('Mystery 001: The Evolved Enigma', () => {
 			(name: string) => name.endsWith('dore') && name.length === 7
 		);
 
-		expect(dorePokemons).toContain('boldore');
-		const answer1 = dorePokemons[0];
-
-		// Submit answer
-		const submitRes = await app.handle(
-			new Request('http://localhost/submit', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					mysteryId: mystery.mysteryId,
-					clueId: mystery.currentClue.id,
-					answer: answer1
-				})
-			})
-		);
-
-		const submitData = await submitRes.json();
-		results.push({
-			clueId: mystery.currentClue.id,
-			answer: answer1,
-			correct: submitData.correct,
-			message: submitData.message
-		});
-
-		expect(submitData.correct).toBe(true);
-		expect(submitData.nextClue).toBeDefined();
+		const answer = dorePokemons[0];
+		currentClue = await submitAnswer(mystery.mysteryId, currentClue, answer);
 	});
 
 	it('should solve clue 2: count game_indices for Boldore', async () => {
-		// Get the next clue from previous submission
-		// First solve clue 1 to get clue 2
-		const clue1Res = await app.handle(
-			new Request('http://localhost/submit', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					mysteryId: mystery.mysteryId,
-					clueId: mystery.currentClue.id, // This is clue_001
-					answer: 'boldore'
-				})
-			})
-		);
-		const clue1Data = await clue1Res.json();
-		expect(clue1Data.correct).toBe(true);
-
-		const clue2 = clue1Data.nextClue;
-		expect(clue2).toBeDefined();
-
 		// Get Boldore details
 		const boldoreRes = await fetch(`${POKEAPI_BASE}/pokemon/boldore`);
 		const boldoreData = await boldoreRes.json();
 
 		// Count game_indices
 		const gameIndicesCount = boldoreData.game_indices.length;
-		const answer2 = gameIndicesCount.toString();
 
-		expect(gameIndicesCount).toBeGreaterThan(0);
-
-		// Submit answer
-		const submitRes = await app.handle(
-			new Request('http://localhost/submit', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					mysteryId: mystery.mysteryId,
-					clueId: clue2.id,
-					answer: answer2
-				})
-			})
-		);
-
-		const submitData = await submitRes.json();
-		results.push({
-			clueId: clue2.id,
-			answer: answer2,
-			correct: submitData.correct,
-			message: submitData.message
-		});
-
-		expect(submitData.correct).toBe(true);
-		expect(submitData.nextClue).toBeDefined();
+		const answer = gameIndicesCount.toString();
+		currentClue = await submitAnswer(mystery.mysteryId, currentClue, answer);
 	});
 
 	it('should solve clue 3: multiply game_indices count by HP stat', async () => {
-		// Re-submit previous answers to get to clue 3
-		// Solve clue 1 to get clue 2
-		const clue1Res = await app.handle(
-			new Request('http://localhost/submit', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					mysteryId: mystery.mysteryId,
-					clueId: mystery.currentClue.id,
-					answer: 'boldore'
-				})
-			})
-		);
-		const clue1Data = await clue1Res.json();
-		const clue2 = clue1Data.nextClue;
-
 		// Get Boldore data
 		const boldoreRes = await fetch(`${POKEAPI_BASE}/pokemon/boldore`);
 		const boldoreData = await boldoreRes.json();
 		const gameIndicesCount = boldoreData.game_indices.length;
-
-		// Solve clue 2 to get clue 3
-		const clue2Res = await app.handle(
-			new Request('http://localhost/submit', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					mysteryId: mystery.mysteryId,
-					clueId: clue2.id, // Use clue2.id, not mystery.currentClue.id
-					answer: gameIndicesCount.toString()
-				})
-			})
-		);
-		const clue2Data = await clue2Res.json();
-		const clue3 = clue2Data.nextClue;
-
-		expect(clue3).toBeDefined();
 
 		// Find HP stat
 		const hpStat = boldoreData.stats.find((s: any) => s.stat.name === 'hp');
@@ -174,34 +53,6 @@ describe('Mystery 001: The Evolved Enigma', () => {
 		// Multiply game indices count by HP
 		const finalAnswer = (gameIndicesCount * hpValue).toString();
 
-		// Submit final answer
-		const submitRes = await app.handle(
-			new Request('http://localhost/submit', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					mysteryId: mystery.mysteryId,
-					clueId: clue3.id,
-					answer: finalAnswer
-				})
-			})
-		);
-
-		const submitData = await submitRes.json();
-		results.push({
-			clueId: clue3.id,
-			answer: finalAnswer,
-			correct: submitData.correct,
-			message: submitData.message
-		});
-
-		expect(submitData.correct).toBe(true);
-		expect(submitData.mysterySolved).toBe(true);
-		expect(submitData.conclusion).toBeDefined();
-	});
-
-	it('should have all clues marked as correct', () => {
-		expect(results.length).toBe(3);
-		expect(results.every((r) => r.correct)).toBe(true);
+		currentClue = await submitFinalAnswer(mystery.mysteryId, currentClue, finalAnswer);
 	});
 });
