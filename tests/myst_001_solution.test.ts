@@ -53,6 +53,6 @@ describe.serial('Mystery 001: The Evolved Enigma', async () => {
 		// Multiply game indices count by HP
 		const finalAnswer = (gameIndicesCount * hpValue).toString();
 
-		currentClue = await submitFinalAnswer(mystery.mysteryId, currentClue, finalAnswer);
+		await submitFinalAnswer(mystery.mysteryId, currentClue, finalAnswer);
 	});
 });

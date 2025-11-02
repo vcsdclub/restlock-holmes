@@ -5,7 +5,6 @@ import { expect } from 'bun:test';
 import app from '../src/routes/[...slugs]/index.ts';
 
 import { treaty } from '@elysiajs/eden';
-import { SubmitResponse } from '../src/routes/[...slugs]/types.ts';
 
 const api = treaty(app);
 
@@ -18,8 +17,9 @@ export async function getMystery(mysteryId: string) {
 	expect(mystery.currentClue).toBeDefined();
 	return mystery as NonNullable<typeof mystery>;
 }
+
 export async function submitFinalAnswer(mysteryId: string, clueId: string, answer: string) {
-	const submitRes = (await (
+	const submitRes = await (
 		await app.handle(
 			new Request('http://localhost/submit', {
 				method: 'POST',
@@ -31,15 +31,14 @@ export async function submitFinalAnswer(mysteryId: string, clueId: string, answe
 				})
 			})
 		)
-	).json()) as SubmitResponse;
+	).json();
 	expect(submitRes.correct).toBe(true);
 	expect(submitRes.mysterySolved).toBe(true);
 	expect(submitRes.conclusion).toBeDefined();
-	return submitRes.clueId;
 }
 
 export async function submitAnswer(mysteryId: string, clueId: string, answer: string) {
-	const submitRes = (await (
+	const submitRes = await (
 		await app.handle(
 			new Request('http://localhost/submit', {
 				method: 'POST',
@@ -51,7 +50,7 @@ export async function submitAnswer(mysteryId: string, clueId: string, answer: st
 				})
 			})
 		)
-	).json()) as SubmitResponse;
+	).json();
 
 	expect(submitRes.correct).toBe(true);
 	expect(submitRes.mysterySolved).toBe(false);
