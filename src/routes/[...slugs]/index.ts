@@ -175,7 +175,7 @@ This API teaches you:
 							apiHint: t.String({ description: 'Hint about which external API to use' }),
 							hintsAvailable: t.Number({ description: 'Number of hints available for this clue' })
 						}),
-						currentClueIndex: t.Number({ description: 'Zero-based index of the current clue' }),
+						// currentClueIndex: t.Number({ description: 'Zero-based index of the current clue' }),
 						totalClues: t.Number({ description: 'Total number of clues in this mystery' }),
 						createdAt: t.String({
 							description: 'ISO 8601 timestamp of when this mystery was created'
@@ -196,7 +196,7 @@ This API teaches you:
 									apiHint: 'Try the PokeAPI at pokeapi.co',
 									hintsAvailable: 3
 								},
-								currentClueIndex: 0,
+								// currentClueIndex: 0,
 								totalClues: 3,
 								createdAt: '2025-11-01T12:00:00.000Z'
 							}
@@ -407,14 +407,14 @@ This API teaches you:
 						conclusion: conclusion || 'Congratulations on solving the mystery!'
 					} satisfies SubmitResponse;
 				} else {
-					// Get next clue
-					const nextClue = store.getNextClue(mysteryId, clueId);
+					// If you're not last, there is always a next clue
+					const nextClue = store.getNextClue(mysteryId, clueId)!;
 					return {
 						correct: true,
 						message: "Correct! Here's your next clue...",
 						mysteryId,
 						clueId,
-						nextClue: nextClue || undefined,
+						nextClue,
 						mysterySolved: false
 					} satisfies SubmitResponse;
 				}
@@ -423,7 +423,8 @@ This API teaches you:
 					correct: false,
 					message: 'Not quite right. Try again, or request a hint!',
 					mysteryId,
-					clueId
+					clueId,
+					mysterySolved: false
 				} satisfies SubmitResponse;
 			}
 		},
@@ -465,7 +466,118 @@ This API teaches you:
 						}
 					]
 				}
-			)
+			),
+			response: {
+				// XXX: the issue is that we have multiple different possible outputs with wildly
+				// different schemas all under 200. Scalar doesn't really support this well
+				// so one option could be (incorrectly) documenting them as separate
+				// HTTP response codes (but still under 2xx) or keep it as how it is currently
+				// (a scuffed union that Scalar doesn't really support)
+				200: t.Union(
+					[
+						// Correct answer with next clue
+						t.Object({
+							correct: t.Literal(true, { description: 'Answer was correct' }),
+							message: t.String({ description: 'Success message' }),
+							mysteryId: t.String({ description: 'The mystery ID' }),
+							clueId: t.String({ description: 'The clue ID that was answered' }),
+							mysterySolved: t.Literal(false, { description: 'Mystery is not yet complete' }),
+							nextClue: t.Object({
+								id: t.String({ description: 'ID of the next clue' }),
+								text: t.String({ description: 'The next clue text' }),
+								apiHint: t.String({ description: 'Hint about which API to use' }),
+								hintsAvailable: t.Number({ description: 'Number of hints for the next clue' })
+							})
+						}),
+						// Correct answer, mystery solved
+						t.Object({
+							correct: t.Literal(true, { description: 'Answer was correct' }),
+							message: t.String({ description: 'Success message' }),
+							mysteryId: t.String({ description: 'The mystery ID' }),
+							clueId: t.String({ description: 'The final clue ID that was answered' }),
+							mysterySolved: t.Literal(true, { description: 'Mystery has been solved' }),
+							conclusion: t.String({ description: 'The mystery conclusion and resolution' })
+						}),
+						// Incorrect answer
+						t.Object({
+							correct: t.Literal(false, { description: 'Answer was incorrect' }),
+							message: t.String({ description: 'Encouragement message' }),
+							mysteryId: t.String({ description: 'The mystery ID' }),
+							clueId: t.String({ description: 'The clue ID that was attempted' }),
+							mysterySolved: t.Literal(false, { description: 'Mystery is not solved yet' })
+						})
+					],
+					{
+						description:
+							'Response varies based on answer correctness and mystery progress. Click on "Show Schema" to see examples for all cases',
+						examples: [
+							{
+								correct: true,
+								message: "Correct! Here's your next clue...",
+								mysteryId: 'mystery-1234567890',
+								clueId: 'clue-1',
+								mysterySolved: false,
+								nextClue: {
+									id: 'clue-2',
+									text: 'What is the height of Charizard in decimeters?',
+									apiHint: 'PokeAPI has this information',
+									hintsAvailable: 2
+								}
+							},
+							{
+								correct: true,
+								message: "Correct! You've solved the entire mystery!",
+								mysteryId: 'mystery-1234567890',
+								clueId: 'clue-3',
+								mysterySolved: true,
+								conclusion:
+									'Excellent detective work! You successfully tracked down the missing Pokemon using your API investigation skills.'
+							},
+							{
+								correct: false,
+								message: 'Not quite right. Try again, or request a hint!',
+								mysteryId: 'mystery-1234567890',
+								clueId: 'clue-1',
+								mysterySolved: false
+							}
+						]
+					}
+				),
+				400: t.Object(
+					{
+						error: t.String(),
+						message: t.String()
+					},
+					{
+						description: 'Missing required parameters',
+						examples: [
+							{
+								error: 'InvalidRequest',
+								message: 'mysteryId, clueId, and answer are required'
+							}
+						]
+					}
+				),
+				404: t.Object(
+					{
+						error: t.String(),
+						message: t.String()
+					},
+					{
+						description: 'Mystery or clue not found',
+						examples: [
+							{
+								error: 'MysteryNotFound',
+								message: 'The specified mystery could not be found'
+							},
+							{
+								error: 'ClueNotFound',
+								message: 'The specified clue could not be found'
+							}
+						]
+					}
+				)
+			}
 		}
 	)
 

@@ -53,7 +53,7 @@ class MysteryStore {
 				apiHint: firstClue.apiHint,
 				hintsAvailable: firstClue.hints.length
 			},
-			currentClueIndex: 0,
+			// currentClueIndex: 0,
 			totalClues: mysteryData.clues.length,
 			createdAt: new Date().toISOString()
 		};
