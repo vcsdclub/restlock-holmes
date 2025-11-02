@@ -13,18 +13,75 @@ export default new Elysia()
 		openapi({
 			documentation: {
 				info: {
-					title: 'API Mystery Hunt',
+					title: 'RESTlock Holmes API',
 					version: '1.0.0',
-					description: `An educational escape room API that teaches developers how to read documentation
-and work with APIs through puzzle-solving. Solve mysteries by reading docs,
-making API calls, and processing data programmatically.`
+					description: `# Welcome to RESTlock Holmes!
+
+An educational escape room API that teaches developers how to read documentation and work with APIs through puzzle-solving.
+
+## How It Works
+
+RESTlock Holmes presents you with mystery cases. Each mystery contains a chain of clues that require you to:
+1. Read and understand the clue description
+2. Query external public APIs (like PokeAPI, Dog CEO, REST Countries, etc.)
+3. Process the API responses to find specific information
+4. Submit your answer to unlock the next clue
+
+## Getting Started
+
+**Quick Start:**
+1. GET \`/mystery\` to receive your first case
+2. Read the \`currentClue.text\` and \`apiHint\`
+3. Query the suggested external API to find the answer
+4. POST \`/submit\` with your answer
+5. Repeat until \`mysterySolved: true\`
+
+**Need help?** Use GET \`/hint\` to get progressive hints for any clue.
+
+## Difficulty Levels
+
+- **Easy:** Simple API queries with straightforward data extraction
+- **Medium:** Requires data processing, filtering, or calculations
+- **Hard:** Multi-step logic, complex data transformations, or multiple API calls
+
+## Learning Objectives
+
+This API teaches you:
+- How to read and understand API documentation
+- Making HTTP requests and handling responses
+- Working with JSON data structures
+- Data processing and transformation
+- Error handling and debugging API calls
+- Progressive problem-solving strategies`,
+					contact: {
+						name: 'RESTlock Holmes',
+						url: 'https://github.com/vcsdclub/restlock-holmes'
+					},
+					license: {
+						name: 'MIT',
+						url: 'https://opensource.org/licenses/MIT'
+					}
 				},
+				servers: [
+					{
+						url: 'http://localhost:3000',
+						description: 'Local development server'
+					}
+				],
 				tags: [
 					{
 						name: 'Game',
-						description: 'Core game mechanics for mystery solving'
+						description: 'Core game mechanics for mystery solving. These endpoints handle the complete game flow from starting a mystery to solving clues and receiving hints.',
+						externalDocs: {
+							description: 'View example solutions',
+							url: 'https://github.com/vcsdclub/restlock-holmes/tree/main/tests'
+						}
 					}
-				]
+				],
+				externalDocs: {
+					description: 'Full documentation and setup guide',
+					url: 'https://github.com/vcsdclub/restlock-holmes'
+				}
 			}
 		})
 	)
@@ -64,16 +121,96 @@ making API calls, and processing data programmatically.`
 			detail: {
 				tags: ['Game'],
 				summary: 'Get a new mystery to solve',
-				description: `Retrieves a mystery case with clues that point to external APIs.
-Each mystery requires reading API documentation and writing code to solve.
-Optionally specify a mysteryId to get a specific mystery (useful for testing).`
+				description: `Retrieves a mystery case with clues that point to external APIs. Each mystery requires reading API documentation and writing code to solve.
+
+**How it works:**
+- Without parameters: Returns a random mystery from all difficulties
+- With difficulty: Returns a random mystery of the specified difficulty level
+- With mysteryId: Returns a specific mystery (useful for replaying or testing)
+
+**Response includes:**
+- Mystery metadata (ID, title, difficulty, scenario)
+- Current clue to solve (first clue in the chain)
+- Progress tracking (current clue index and total clues)
+- Number of hints available for the current clue
+
+**Workflow:**
+1. Call this endpoint to start a new mystery
+2. Save the \`mysteryId\` and \`currentClue.id\` - you'll need them for subsequent requests
+3. Read the \`currentClue.text\` and \`apiHint\` to understand what to find
+4. Use external APIs to gather data and determine your answer
+5. Submit your answer via POST /submit`,
+				externalDocs: {
+					description: 'Learn more about solving mysteries',
+					url: 'https://github.com/vcsdclub/restlock-holmes'
+				}
 			},
 			query: t.Object({
 				difficulty: t.Optional(
-					t.Union([t.Literal('easy'), t.Literal('medium'), t.Literal('hard')])
+					t.Union([t.Literal('easy'), t.Literal('medium'), t.Literal('hard')], {
+						description: 'Filter mysteries by difficulty level. Easy mysteries involve simple API calls, medium require data processing, hard involve complex multi-step logic.'
+					})
 				),
-				mysteryId: t.Optional(t.String())
-			})
+				mysteryId: t.Optional(t.String({
+					description: 'Request a specific mystery by ID. Useful for replaying mysteries or testing solutions.'
+				}))
+			}),
+			response: {
+				200: t.Object({
+					mysteryId: t.String({ description: 'Unique identifier for this mystery instance' }),
+					title: t.String({ description: 'The name of the mystery case' }),
+					difficulty: t.Union([t.Literal('easy'), t.Literal('medium'), t.Literal('hard')], {
+						description: 'Difficulty level of this mystery'
+					}),
+					scenario: t.String({ description: 'Background story and context for the mystery' }),
+					currentClue: t.Object({
+						id: t.String({ description: 'Unique identifier for this clue' }),
+						text: t.String({ description: 'The clue text describing what you need to find' }),
+						apiHint: t.String({ description: 'Hint about which external API to use' }),
+						hintsAvailable: t.Number({ description: 'Number of hints available for this clue' })
+					}),
+					currentClueIndex: t.Number({ description: 'Zero-based index of the current clue' }),
+					totalClues: t.Number({ description: 'Total number of clues in this mystery' }),
+					createdAt: t.String({ description: 'ISO 8601 timestamp of when this mystery was created' })
+				}, {
+					description: 'A mystery case with the first clue to solve',
+					examples: [{
+						mysteryId: 'mystery-1234567890',
+						title: 'The Case of the Missing Pokemon',
+						difficulty: 'easy',
+						scenario: 'A rare Pokemon has gone missing from Professor Oak\'s lab. Use your API skills to track it down!',
+						currentClue: {
+							id: 'clue-1',
+							text: 'Find out how many game appearances Pikachu has made',
+							apiHint: 'Try the PokeAPI at pokeapi.co',
+							hintsAvailable: 3
+						},
+						currentClueIndex: 0,
+						totalClues: 3,
+						createdAt: '2025-11-01T12:00:00.000Z'
+					}]
+				}),
+				400: t.Object({
+					error: t.String(),
+					message: t.String()
+				}, {
+					description: 'Invalid difficulty parameter',
+					examples: [{
+						error: 'InvalidDifficulty',
+						message: "Difficulty must be 'easy', 'medium', or 'hard'"
+					}]
+				}),
+				404: t.Object({
+					error: t.String(),
+					message: t.String()
+				}, {
+					description: 'Mystery not found (when mysteryId is specified)',
+					examples: [{
+						error: 'MysteryNotFound',
+						message: 'No mystery found with ID: mystery-12345'
+					}]
+				})
+			}
 		}
 	)
 
@@ -112,13 +249,68 @@ Optionally specify a mysteryId to get a specific mystery (useful for testing).`
 			detail: {
 				tags: ['Game'],
 				summary: 'Get a hint for the current clue',
-				description: `Retrieves a hint by index to help solve the current clue. If no index is provided, returns the first hint (index 0). Returns "No more hints." if the index is out of bounds. Hints are unlimited and don't affect scoring.`
+				description: `Retrieves a hint to help solve the current clue. Hints are provided sequentially and become progressively more helpful.
+
+**How hints work:**
+- Hints are indexed starting at 0
+- Omit the \`index\` parameter to get the first hint (index 0)
+- Each clue has a different number of hints available (check \`hintsAvailable\` in the clue)
+- Requesting an index beyond available hints returns "No more hints."
+- Hints are unlimited - use as many as you need without penalty
+
+**Strategy:**
+- First hint: Usually points you to the right API endpoint or data structure
+- Middle hints: Help with data processing or transformation logic
+- Final hints: Provide nearly complete guidance, stopping short of the exact answer
+
+**Example usage:**
+1. GET /hint?mysteryId=X&clueId=Y (gets first hint)
+2. GET /hint?mysteryId=X&clueId=Y&index=1 (gets second hint)
+3. Continue incrementing index until you get "No more hints."`
 			},
 			query: t.Object({
-				mysteryId: t.String(),
-				clueId: t.String(),
-				index: t.Optional(t.Numeric())
-			})
+				mysteryId: t.String({ description: 'The mystery ID from GET /mystery' }),
+				clueId: t.String({ description: 'The clue ID from the current clue' }),
+				index: t.Optional(t.Numeric({ description: 'Zero-based hint index. Omit to get the first hint (index 0)' }))
+			}),
+			response: {
+				200: t.Object({
+					mysteryId: t.String({ description: 'The mystery ID' }),
+					clueId: t.String({ description: 'The clue ID' }),
+					hint: t.String({ description: 'The hint text, or "No more hints." if index is out of bounds' })
+				}, {
+					description: 'A hint for the specified clue',
+					examples: [{
+						mysteryId: 'mystery-1234567890',
+						clueId: 'clue-1',
+						hint: 'Try querying the PokeAPI endpoint for Pikachu: https://pokeapi.co/api/v2/pokemon/pikachu'
+					}, {
+						mysteryId: 'mystery-1234567890',
+						clueId: 'clue-1',
+						hint: 'No more hints.'
+					}]
+				}),
+				400: t.Object({
+					error: t.String(),
+					message: t.String()
+				}, {
+					description: 'Missing required parameters',
+					examples: [{
+						error: 'MissingParameter',
+						message: 'mysteryId and clueId are required'
+					}]
+				}),
+				404: t.Object({
+					error: t.String(),
+					message: t.String()
+				}, {
+					description: 'Clue not found or has no hints available',
+					examples: [{
+						error: 'ClueNotFound',
+						message: 'The specified clue could not be found or has no hints available'
+					}]
+				})
+			}
 		}
 	)
 
@@ -196,12 +388,35 @@ Optionally specify a mysteryId to get a specific mystery (useful for testing).`
 			detail: {
 				tags: ['Game'],
 				summary: 'Submit an answer to a clue',
-				description: `Submit your answer to the current clue. If correct, you'll receive the next clue in the chain, or the conclusion if you've solved the mystery.`
+				description: `Submit your answer to the current clue. The API validates your answer and progresses you through the mystery chain.
+
+**Response behavior:**
+- **Correct answer, more clues remaining:** Returns \`nextClue\` object with the next challenge
+- **Correct answer, final clue:** Returns \`conclusion\` with the mystery resolution and \`mysterySolved: true\`
+- **Incorrect answer:** Returns \`correct: false\` with an encouraging message to try again
+
+**Answer format:**
+- Answers are case-insensitive (e.g., "Pikachu", "pikachu", and "PIKACHU" are all equivalent)
+- Whitespace is trimmed automatically
+- Submit answers as strings, even if they're numbers (e.g., "42" not 42)
+
+**Workflow:**
+1. Get a mystery and extract mysteryId and clueId
+2. Solve the clue by querying external APIs
+3. Submit your answer to this endpoint
+4. If correct, save the new clueId and continue with the next clue
+5. Repeat until mysterySolved is true`
 			},
 			body: t.Object({
-				mysteryId: t.String(),
-				clueId: t.String(),
-				answer: t.String()
+				mysteryId: t.String({ description: 'The mystery ID from GET /mystery' }),
+				clueId: t.String({ description: 'The current clue ID you are answering' }),
+				answer: t.String({ description: 'Your answer as a string (case-insensitive)' })
+			}, {
+				examples: [{
+					mysteryId: 'mystery-1234567890',
+					clueId: 'clue-1',
+					answer: '42'
+				}]
 			})
 		}
 	)
