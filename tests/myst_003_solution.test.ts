@@ -2,7 +2,7 @@
  * Vitest Unit Tests for Mystery 003: The JSONPlaceholder Puzzle
  */
 
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll } from 'bun:test';
 import app from '../src/routes/[...slugs]/index.ts';
 
 const JSON_API_BASE = 'https://jsonplaceholder.typicode.com';
@@ -43,15 +43,17 @@ describe('Mystery 003: The JSONPlaceholder Puzzle', () => {
 		const answer1 = postData.userId.toString();
 
 		// Submit answer
-		const submitRes = await app.handle(new Request('http://localhost/submit', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				mysteryId: mystery.mysteryId,
-				clueId: mystery.currentClue.id,
-				answer: answer1
+		const submitRes = await app.handle(
+			new Request('http://localhost/submit', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					mysteryId: mystery.mysteryId,
+					clueId: mystery.currentClue.id,
+					answer: answer1
+				})
 			})
-		}));
+		);
 
 		const submitData = await submitRes.json();
 		results.push({
@@ -70,15 +72,17 @@ describe('Mystery 003: The JSONPlaceholder Puzzle', () => {
 		const postData = await postRes.json();
 		const answer1 = postData.userId.toString();
 
-		const clue1Res = await app.handle(new Request('http://localhost/submit', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				mysteryId: mystery.mysteryId,
-				clueId: mystery.currentClue.id,
-				answer: answer1
+		const clue1Res = await app.handle(
+			new Request('http://localhost/submit', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					mysteryId: mystery.mysteryId,
+					clueId: mystery.currentClue.id,
+					answer: answer1
+				})
 			})
-		}));
+		);
 		const clue1Data = await clue1Res.json();
 		const clue2 = clue1Data.nextClue;
 
@@ -96,15 +100,17 @@ describe('Mystery 003: The JSONPlaceholder Puzzle', () => {
 		const answer2 = firstName;
 
 		// Submit answer
-		const submitRes = await app.handle(new Request('http://localhost/submit', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				mysteryId: mystery.mysteryId,
-				clueId: clue2.id,
-				answer: answer2
+		const submitRes = await app.handle(
+			new Request('http://localhost/submit', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					mysteryId: mystery.mysteryId,
+					clueId: clue2.id,
+					answer: answer2
+				})
 			})
-		}));
+		);
 
 		const submitData = await submitRes.json();
 		results.push({ clueId: clue2.id, answer: answer2, correct: submitData.correct });
@@ -119,15 +125,17 @@ describe('Mystery 003: The JSONPlaceholder Puzzle', () => {
 		const postData = await postRes.json();
 		const answer1 = postData.userId.toString();
 
-		await app.handle(new Request('http://localhost/submit', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				mysteryId: mystery.mysteryId,
-				clueId: mystery.currentClue.id,
-				answer: answer1
+		await app.handle(
+			new Request('http://localhost/submit', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					mysteryId: mystery.mysteryId,
+					clueId: mystery.currentClue.id,
+					answer: answer1
+				})
 			})
-		}));
+		);
 
 		const userRes = await fetch(`${JSON_API_BASE}/users/5`);
 		const userData = await userRes.json();
@@ -135,26 +143,30 @@ describe('Mystery 003: The JSONPlaceholder Puzzle', () => {
 		const firstName = fullName.split(' ')[0];
 		const answer2 = firstName;
 
-		const clue1Res = await app.handle(new Request('http://localhost/submit', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				mysteryId: mystery.mysteryId,
-				clueId: mystery.currentClue.id,
-				answer: answer1
+		const clue1Res = await app.handle(
+			new Request('http://localhost/submit', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					mysteryId: mystery.mysteryId,
+					clueId: mystery.currentClue.id,
+					answer: answer1
+				})
 			})
-		}));
+		);
 		const clue1Data = await clue1Res.json();
 
-		const clue2Res = await app.handle(new Request('http://localhost/submit', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				mysteryId: mystery.mysteryId,
-				clueId: clue1Data.nextClue.id,
-				answer: answer2
+		const clue2Res = await app.handle(
+			new Request('http://localhost/submit', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					mysteryId: mystery.mysteryId,
+					clueId: clue1Data.nextClue.id,
+					answer: answer2
+				})
 			})
-		}));
+		);
 		const clue2Data = await clue2Res.json();
 		const clue3 = clue2Data.nextClue;
 
@@ -164,15 +176,17 @@ describe('Mystery 003: The JSONPlaceholder Puzzle', () => {
 		const answer3 = answer2.length.toString();
 
 		// Submit final answer
-		const submitRes = await app.handle(new Request('http://localhost/submit', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				mysteryId: mystery.mysteryId,
-				clueId: clue3.id,
-				answer: answer3
+		const submitRes = await app.handle(
+			new Request('http://localhost/submit', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					mysteryId: mystery.mysteryId,
+					clueId: clue3.id,
+					answer: answer3
+				})
 			})
-		}));
+		);
 
 		const submitData = await submitRes.json();
 		results.push({ clueId: clue3.id, answer: answer3, correct: submitData.correct });

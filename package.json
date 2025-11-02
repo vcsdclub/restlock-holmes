@@ -12,8 +12,7 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
-		"test:unit": "vitest",
-		"test": "npm run test:unit -- --run"
+		"test": "bun test"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",
@@ -21,6 +20,7 @@
 		"@sveltejs/adapter-vercel": "^5.6.3",
 		"@sveltejs/kit": "^2.22.0",
 		"@sveltejs/vite-plugin-svelte": "^6.0.0",
+		"@types/bun": "^1.3.1",
 		"@types/js-yaml": "^4.0.9",
 		"bun-types": "^1.3.1",
 		"eslint": "^9.18.0",
@@ -33,8 +33,7 @@
 		"svelte-check": "^4.0.0",
 		"typescript": "^5.0.0",
 		"typescript-eslint": "^8.20.0",
-		"vite": "^7.0.4",
-		"vitest": "^3.2.3"
+		"vite": "^7.0.4"
 	},
 	"dependencies": {
 		"@elysiajs/openapi": "^1.4.11",

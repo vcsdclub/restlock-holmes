@@ -2,7 +2,7 @@
  * Vitest Unit Tests for Mystery 001: The Evolved Enigma
  */
 
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll } from 'bun:test';
 import app from '../src/routes/[...slugs]/index.ts';
 
 const POKEAPI_BASE = 'https://pokeapi.co/api/v2';
@@ -47,15 +47,17 @@ describe('Mystery 001: The Evolved Enigma', () => {
 		const answer1 = dorePokemons[0];
 
 		// Submit answer
-		const submitRes = await app.handle(new Request('http://localhost/submit', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				mysteryId: mystery.mysteryId,
-				clueId: mystery.currentClue.id,
-				answer: answer1
+		const submitRes = await app.handle(
+			new Request('http://localhost/submit', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					mysteryId: mystery.mysteryId,
+					clueId: mystery.currentClue.id,
+					answer: answer1
+				})
 			})
-		}));
+		);
 
 		const submitData = await submitRes.json();
 		results.push({
@@ -72,15 +74,17 @@ describe('Mystery 001: The Evolved Enigma', () => {
 	it('should solve clue 2: count game_indices for Boldore', async () => {
 		// Get the next clue from previous submission
 		// First solve clue 1 to get clue 2
-		const clue1Res = await app.handle(new Request('http://localhost/submit', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				mysteryId: mystery.mysteryId,
-				clueId: mystery.currentClue.id, // This is clue_001
-				answer: 'boldore'
+		const clue1Res = await app.handle(
+			new Request('http://localhost/submit', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					mysteryId: mystery.mysteryId,
+					clueId: mystery.currentClue.id, // This is clue_001
+					answer: 'boldore'
+				})
 			})
-		}));
+		);
 		const clue1Data = await clue1Res.json();
 		expect(clue1Data.correct).toBe(true);
 
@@ -98,15 +102,17 @@ describe('Mystery 001: The Evolved Enigma', () => {
 		expect(gameIndicesCount).toBeGreaterThan(0);
 
 		// Submit answer
-		const submitRes = await app.handle(new Request('http://localhost/submit', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				mysteryId: mystery.mysteryId,
-				clueId: clue2.id,
-				answer: answer2
+		const submitRes = await app.handle(
+			new Request('http://localhost/submit', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					mysteryId: mystery.mysteryId,
+					clueId: clue2.id,
+					answer: answer2
+				})
 			})
-		}));
+		);
 
 		const submitData = await submitRes.json();
 		results.push({
@@ -123,15 +129,17 @@ describe('Mystery 001: The Evolved Enigma', () => {
 	it('should solve clue 3: multiply game_indices count by HP stat', async () => {
 		// Re-submit previous answers to get to clue 3
 		// Solve clue 1 to get clue 2
-		const clue1Res = await app.handle(new Request('http://localhost/submit', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				mysteryId: mystery.mysteryId,
-				clueId: mystery.currentClue.id,
-				answer: 'boldore'
+		const clue1Res = await app.handle(
+			new Request('http://localhost/submit', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					mysteryId: mystery.mysteryId,
+					clueId: mystery.currentClue.id,
+					answer: 'boldore'
+				})
 			})
-		}));
+		);
 		const clue1Data = await clue1Res.json();
 		const clue2 = clue1Data.nextClue;
 
@@ -141,15 +149,17 @@ describe('Mystery 001: The Evolved Enigma', () => {
 		const gameIndicesCount = boldoreData.game_indices.length;
 
 		// Solve clue 2 to get clue 3
-		const clue2Res = await app.handle(new Request('http://localhost/submit', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				mysteryId: mystery.mysteryId,
-				clueId: clue2.id, // Use clue2.id, not mystery.currentClue.id
-				answer: gameIndicesCount.toString()
+		const clue2Res = await app.handle(
+			new Request('http://localhost/submit', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					mysteryId: mystery.mysteryId,
+					clueId: clue2.id, // Use clue2.id, not mystery.currentClue.id
+					answer: gameIndicesCount.toString()
+				})
 			})
-		}));
+		);
 		const clue2Data = await clue2Res.json();
 		const clue3 = clue2Data.nextClue;
 
@@ -165,15 +175,17 @@ describe('Mystery 001: The Evolved Enigma', () => {
 		const finalAnswer = (gameIndicesCount * hpValue).toString();
 
 		// Submit final answer
-		const submitRes = await app.handle(new Request('http://localhost/submit', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				mysteryId: mystery.mysteryId,
-				clueId: clue3.id,
-				answer: finalAnswer
+		const submitRes = await app.handle(
+			new Request('http://localhost/submit', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					mysteryId: mystery.mysteryId,
+					clueId: clue3.id,
+					answer: finalAnswer
+				})
 			})
-		}));
+		);
 
 		const submitData = await submitRes.json();
 		results.push({

@@ -2,7 +2,7 @@
  * Vitest Unit Tests for Mystery 002: The Dog Breed Mystery
  */
 
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll } from 'bun:test';
 import app from '../src/routes/[...slugs]/index.ts';
 
 const DOG_API_BASE = 'https://dog.ceo/api';
@@ -43,15 +43,17 @@ describe('Mystery 002: The Dog Breed Mystery', () => {
 		const answer1 = houndSubBreeds.length.toString();
 
 		// Submit answer
-		const submitRes = await app.handle(new Request('http://localhost/submit', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				mysteryId: mystery.mysteryId,
-				clueId: mystery.currentClue.id,
-				answer: answer1
+		const submitRes = await app.handle(
+			new Request('http://localhost/submit', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					mysteryId: mystery.mysteryId,
+					clueId: mystery.currentClue.id,
+					answer: answer1
+				})
 			})
-		}));
+		);
 
 		const submitData = await submitRes.json();
 		results.push({
@@ -71,15 +73,17 @@ describe('Mystery 002: The Dog Breed Mystery', () => {
 		const houndSubBreeds = breedsData.message.hound;
 
 		// Re-submit clue 1 to get clue 2
-		const clue1Res = await app.handle(new Request('http://localhost/submit', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				mysteryId: mystery.mysteryId,
-				clueId: mystery.currentClue.id,
-				answer: houndSubBreeds.length.toString()
+		const clue1Res = await app.handle(
+			new Request('http://localhost/submit', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					mysteryId: mystery.mysteryId,
+					clueId: mystery.currentClue.id,
+					answer: houndSubBreeds.length.toString()
+				})
 			})
-		}));
+		);
 		const clue1Data = await clue1Res.json();
 		const clue2 = clue1Data.nextClue;
 
@@ -92,15 +96,17 @@ describe('Mystery 002: The Dog Breed Mystery', () => {
 		expect(sortedHounds.length).toBeGreaterThan(0);
 
 		// Submit answer
-		const submitRes = await app.handle(new Request('http://localhost/submit', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				mysteryId: mystery.mysteryId,
-				clueId: clue2.id,
-				answer: answer2
+		const submitRes = await app.handle(
+			new Request('http://localhost/submit', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					mysteryId: mystery.mysteryId,
+					clueId: clue2.id,
+					answer: answer2
+				})
 			})
-		}));
+		);
 
 		const submitData = await submitRes.json();
 		results.push({ clueId: clue2.id, answer: answer2, correct: submitData.correct });
@@ -116,39 +122,45 @@ describe('Mystery 002: The Dog Breed Mystery', () => {
 		const houndSubBreeds = breedsData.message.hound;
 
 		// Re-submit clues 1 and 2 to get clue 3
-		await app.handle(new Request('http://localhost/submit', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				mysteryId: mystery.mysteryId,
-				clueId: mystery.currentClue.id,
-				answer: houndSubBreeds.length.toString()
+		await app.handle(
+			new Request('http://localhost/submit', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					mysteryId: mystery.mysteryId,
+					clueId: mystery.currentClue.id,
+					answer: houndSubBreeds.length.toString()
+				})
 			})
-		}));
+		);
 
 		const sortedHounds = [...houndSubBreeds].sort();
 		const answer2 = sortedHounds[0];
 
-		const clue2Res = await app.handle(new Request('http://localhost/submit', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				mysteryId: mystery.mysteryId,
-				clueId: mystery.currentClue.id,
-				answer: houndSubBreeds.length.toString()
+		const clue2Res = await app.handle(
+			new Request('http://localhost/submit', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					mysteryId: mystery.mysteryId,
+					clueId: mystery.currentClue.id,
+					answer: houndSubBreeds.length.toString()
+				})
 			})
-		}));
+		);
 		const clue2Data = await clue2Res.json();
 
-		const submitClue2Res = await app.handle(new Request('http://localhost/submit', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				mysteryId: mystery.mysteryId,
-				clueId: clue2Data.nextClue.id,
-				answer: answer2
+		const submitClue2Res = await app.handle(
+			new Request('http://localhost/submit', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					mysteryId: mystery.mysteryId,
+					clueId: clue2Data.nextClue.id,
+					answer: answer2
+				})
 			})
-		}));
+		);
 		const submitClue2Data = await submitClue2Res.json();
 		const clue3 = submitClue2Data.nextClue;
 
@@ -158,15 +170,17 @@ describe('Mystery 002: The Dog Breed Mystery', () => {
 		const answer3 = answer2.length.toString();
 
 		// Submit final answer
-		const submitRes = await app.handle(new Request('http://localhost/submit', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				mysteryId: mystery.mysteryId,
-				clueId: clue3.id,
-				answer: answer3
+		const submitRes = await app.handle(
+			new Request('http://localhost/submit', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					mysteryId: mystery.mysteryId,
+					clueId: clue3.id,
+					answer: answer3
+				})
 			})
-		}));
+		);
 
 		const submitData = await submitRes.json();
 		results.push({ clueId: clue3.id, answer: answer3, correct: submitData.correct });
