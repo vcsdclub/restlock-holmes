@@ -71,7 +71,8 @@ This API teaches you:
 				tags: [
 					{
 						name: 'Game',
-						description: 'Core game mechanics for mystery solving. These endpoints handle the complete game flow from starting a mystery to solving clues and receiving hints.',
+						description:
+							'Core game mechanics for mystery solving. These endpoints handle the complete game flow from starting a mystery to solving clues and receiving hints.',
 						externalDocs: {
 							description: 'View example solutions',
 							url: 'https://github.com/vcsdclub/restlock-holmes/tree/main/tests'
@@ -142,74 +143,96 @@ This API teaches you:
 5. Submit your answer via POST /submit`,
 				externalDocs: {
 					description: 'Learn more about solving mysteries',
-					url: 'https://github.com/vcsdclub/restlock-holmes'
+					url: 'https://github.com/vcsdclub/restlock-holmes?tab=readme-ov-file#example-mystery'
 				}
 			},
 			query: t.Object({
 				difficulty: t.Optional(
 					t.Union([t.Literal('easy'), t.Literal('medium'), t.Literal('hard')], {
-						description: 'Filter mysteries by difficulty level. Easy mysteries involve simple API calls, medium require data processing, hard involve complex multi-step logic.'
+						description:
+							'Filter mysteries by difficulty level. Easy mysteries involve simple API calls, medium require data processing, hard involve complex multi-step logic.'
 					})
 				),
-				mysteryId: t.Optional(t.String({
-					description: 'Request a specific mystery by ID. Useful for replaying mysteries or testing solutions.'
-				}))
+				mysteryId: t.Optional(
+					t.String({
+						description:
+							'Request a specific mystery by ID. Useful for replaying mysteries or testing solutions.'
+					})
+				)
 			}),
 			response: {
-				200: t.Object({
-					mysteryId: t.String({ description: 'Unique identifier for this mystery instance' }),
-					title: t.String({ description: 'The name of the mystery case' }),
-					difficulty: t.Union([t.Literal('easy'), t.Literal('medium'), t.Literal('hard')], {
-						description: 'Difficulty level of this mystery'
-					}),
-					scenario: t.String({ description: 'Background story and context for the mystery' }),
-					currentClue: t.Object({
-						id: t.String({ description: 'Unique identifier for this clue' }),
-						text: t.String({ description: 'The clue text describing what you need to find' }),
-						apiHint: t.String({ description: 'Hint about which external API to use' }),
-						hintsAvailable: t.Number({ description: 'Number of hints available for this clue' })
-					}),
-					currentClueIndex: t.Number({ description: 'Zero-based index of the current clue' }),
-					totalClues: t.Number({ description: 'Total number of clues in this mystery' }),
-					createdAt: t.String({ description: 'ISO 8601 timestamp of when this mystery was created' })
-				}, {
-					description: 'A mystery case with the first clue to solve',
-					examples: [{
-						mysteryId: 'mystery-1234567890',
-						title: 'The Case of the Missing Pokemon',
-						difficulty: 'easy',
-						scenario: 'A rare Pokemon has gone missing from Professor Oak\'s lab. Use your API skills to track it down!',
-						currentClue: {
-							id: 'clue-1',
-							text: 'Find out how many game appearances Pikachu has made',
-							apiHint: 'Try the PokeAPI at pokeapi.co',
-							hintsAvailable: 3
-						},
-						currentClueIndex: 0,
-						totalClues: 3,
-						createdAt: '2025-11-01T12:00:00.000Z'
-					}]
-				}),
-				400: t.Object({
-					error: t.String(),
-					message: t.String()
-				}, {
-					description: 'Invalid difficulty parameter',
-					examples: [{
-						error: 'InvalidDifficulty',
-						message: "Difficulty must be 'easy', 'medium', or 'hard'"
-					}]
-				}),
-				404: t.Object({
-					error: t.String(),
-					message: t.String()
-				}, {
-					description: 'Mystery not found (when mysteryId is specified)',
-					examples: [{
-						error: 'MysteryNotFound',
-						message: 'No mystery found with ID: mystery-12345'
-					}]
-				})
+				200: t.Object(
+					{
+						mysteryId: t.String({ description: 'Unique identifier for this mystery instance' }),
+						title: t.String({ description: 'The name of the mystery case' }),
+						difficulty: t.Union([t.Literal('easy'), t.Literal('medium'), t.Literal('hard')], {
+							description: 'Difficulty level of this mystery'
+						}),
+						scenario: t.String({ description: 'Background story and context for the mystery' }),
+						currentClue: t.Object({
+							id: t.String({ description: 'Unique identifier for this clue' }),
+							text: t.String({ description: 'The clue text describing what you need to find' }),
+							apiHint: t.String({ description: 'Hint about which external API to use' }),
+							hintsAvailable: t.Number({ description: 'Number of hints available for this clue' })
+						}),
+						currentClueIndex: t.Number({ description: 'Zero-based index of the current clue' }),
+						totalClues: t.Number({ description: 'Total number of clues in this mystery' }),
+						createdAt: t.String({
+							description: 'ISO 8601 timestamp of when this mystery was created'
+						})
+					},
+					{
+						description: 'A mystery case with the first clue to solve',
+						examples: [
+							{
+								mysteryId: 'mystery-1234567890',
+								title: 'The Case of the Missing Pokemon',
+								difficulty: 'easy',
+								scenario:
+									"A rare Pokemon has gone missing from Professor Oak's lab. Use your API skills to track it down!",
+								currentClue: {
+									id: 'clue-1',
+									text: 'Find out how many game appearances Pikachu has made',
+									apiHint: 'Try the PokeAPI at pokeapi.co',
+									hintsAvailable: 3
+								},
+								currentClueIndex: 0,
+								totalClues: 3,
+								createdAt: '2025-11-01T12:00:00.000Z'
+							}
+						]
+					}
+				),
+				400: t.Object(
+					{
+						error: t.String(),
+						message: t.String()
+					},
+					{
+						description: 'Invalid difficulty parameter',
+						examples: [
+							{
+								error: 'InvalidDifficulty',
+								message: "Difficulty must be 'easy', 'medium', or 'hard'"
+							}
+						]
+					}
+				),
+				404: t.Object(
+					{
+						error: t.String(),
+						message: t.String()
+					},
+					{
+						description: 'Mystery not found (when mysteryId is specified)',
+						examples: [
+							{
+								error: 'MysteryNotFound',
+								message: 'No mystery found with ID: mystery-12345'
+							}
+						]
+					}
+				)
 			}
 		}
 	)
@@ -271,45 +294,65 @@ This API teaches you:
 			query: t.Object({
 				mysteryId: t.String({ description: 'The mystery ID from GET /mystery' }),
 				clueId: t.String({ description: 'The clue ID from the current clue' }),
-				index: t.Optional(t.Numeric({ description: 'Zero-based hint index. Omit to get the first hint (index 0)' }))
+				index: t.Optional(
+					t.Numeric({ description: 'Zero-based hint index. Omit to get the first hint (index 0)' })
+				)
 			}),
 			response: {
-				200: t.Object({
-					mysteryId: t.String({ description: 'The mystery ID' }),
-					clueId: t.String({ description: 'The clue ID' }),
-					hint: t.String({ description: 'The hint text, or "No more hints." if index is out of bounds' })
-				}, {
-					description: 'A hint for the specified clue',
-					examples: [{
-						mysteryId: 'mystery-1234567890',
-						clueId: 'clue-1',
-						hint: 'Try querying the PokeAPI endpoint for Pikachu: https://pokeapi.co/api/v2/pokemon/pikachu'
-					}, {
-						mysteryId: 'mystery-1234567890',
-						clueId: 'clue-1',
-						hint: 'No more hints.'
-					}]
-				}),
-				400: t.Object({
-					error: t.String(),
-					message: t.String()
-				}, {
-					description: 'Missing required parameters',
-					examples: [{
-						error: 'MissingParameter',
-						message: 'mysteryId and clueId are required'
-					}]
-				}),
-				404: t.Object({
-					error: t.String(),
-					message: t.String()
-				}, {
-					description: 'Clue not found or has no hints available',
-					examples: [{
-						error: 'ClueNotFound',
-						message: 'The specified clue could not be found or has no hints available'
-					}]
-				})
+				200: t.Object(
+					{
+						mysteryId: t.String({ description: 'The mystery ID' }),
+						clueId: t.String({ description: 'The clue ID' }),
+						hint: t.String({
+							description: 'The hint text, or "No more hints." if index is out of bounds'
+						})
+					},
+					{
+						description: 'A hint for the specified clue',
+						examples: [
+							{
+								mysteryId: 'mystery-1234567890',
+								clueId: 'clue-1',
+								hint: 'Try querying the PokeAPI endpoint for Pikachu: https://pokeapi.co/api/v2/pokemon/pikachu'
+							},
+							{
+								mysteryId: 'mystery-1234567890',
+								clueId: 'clue-1',
+								hint: 'No more hints.'
+							}
+						]
+					}
+				),
+				400: t.Object(
+					{
+						error: t.String(),
+						message: t.String()
+					},
+					{
+						description: 'Missing required parameters',
+						examples: [
+							{
+								error: 'MissingParameter',
+								message: 'mysteryId and clueId are required'
+							}
+						]
+					}
+				),
+				404: t.Object(
+					{
+						error: t.String(),
+						message: t.String()
+					},
+					{
+						description: 'Clue not found or has no hints available',
+						examples: [
+							{
+								error: 'ClueNotFound',
+								message: 'The specified clue could not be found or has no hints available'
+							}
+						]
+					}
+				)
 			}
 		}
 	)
@@ -407,17 +450,22 @@ This API teaches you:
 4. If correct, save the new clueId and continue with the next clue
 5. Repeat until mysterySolved is true`
 			},
-			body: t.Object({
-				mysteryId: t.String({ description: 'The mystery ID from GET /mystery' }),
-				clueId: t.String({ description: 'The current clue ID you are answering' }),
-				answer: t.String({ description: 'Your answer as a string (case-insensitive)' })
-			}, {
-				examples: [{
-					mysteryId: 'mystery-1234567890',
-					clueId: 'clue-1',
-					answer: '42'
-				}]
-			})
+			body: t.Object(
+				{
+					mysteryId: t.String({ description: 'The mystery ID from GET /mystery' }),
+					clueId: t.String({ description: 'The current clue ID you are answering' }),
+					answer: t.String({ description: 'Your answer as a string (case-insensitive)' })
+				},
+				{
+					examples: [
+						{
+							mysteryId: 'mystery-1234567890',
+							clueId: 'clue-1',
+							answer: '42'
+						}
+					]
+				}
+			)
 		}
 	)
 
