@@ -3,8 +3,8 @@
  */
 
 import { describe, it, expect, beforeAll } from 'vitest';
+import app from '../src/routes/[...slugs]/index.ts';
 
-const BASE_URL = 'http://localhost:5173';
 const POKEAPI_BASE = 'https://pokeapi.co/api/v2';
 
 interface TestResult {
@@ -20,7 +20,7 @@ describe('Mystery 001: The Evolved Enigma', () => {
 
 	beforeAll(async () => {
 		// Get the mystery
-		const mysteryRes = await fetch(`${BASE_URL}/mystery?mysteryId=myst_001`);
+		const mysteryRes = await app.handle(new Request('http://localhost/mystery?mysteryId=myst_001'));
 		mystery = await mysteryRes.json();
 	});
 
@@ -47,7 +47,7 @@ describe('Mystery 001: The Evolved Enigma', () => {
 		const answer1 = dorePokemons[0];
 
 		// Submit answer
-		const submitRes = await fetch(`${BASE_URL}/submit`, {
+		const submitRes = await app.handle(new Request('http://localhost/submit', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
@@ -55,7 +55,7 @@ describe('Mystery 001: The Evolved Enigma', () => {
 				clueId: mystery.currentClue.id,
 				answer: answer1
 			})
-		});
+		}));
 
 		const submitData = await submitRes.json();
 		results.push({
@@ -71,21 +71,21 @@ describe('Mystery 001: The Evolved Enigma', () => {
 
 	it('should solve clue 2: count game_indices for Boldore', async () => {
 		// Get the next clue from previous submission
-	// First solve clue 1 to get clue 2
-const clue1Res = await fetch(`${BASE_URL}/submit`, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    mysteryId: mystery.mysteryId,
-    clueId: mystery.currentClue.id,  // This is clue_001
-    answer: 'boldore'
-  })
-});
-const clue1Data = await clue1Res.json();
-expect(clue1Data.correct).toBe(true);
+		// First solve clue 1 to get clue 2
+		const clue1Res = await app.handle(new Request('http://localhost/submit', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				mysteryId: mystery.mysteryId,
+				clueId: mystery.currentClue.id, // This is clue_001
+				answer: 'boldore'
+			})
+		}));
+		const clue1Data = await clue1Res.json();
+		expect(clue1Data.correct).toBe(true);
 
-const clue2 = clue1Data.nextClue;
-expect(clue2).toBeDefined();
+		const clue2 = clue1Data.nextClue;
+		expect(clue2).toBeDefined();
 
 		// Get Boldore details
 		const boldoreRes = await fetch(`${POKEAPI_BASE}/pokemon/boldore`);
@@ -98,7 +98,7 @@ expect(clue2).toBeDefined();
 		expect(gameIndicesCount).toBeGreaterThan(0);
 
 		// Submit answer
-		const submitRes = await fetch(`${BASE_URL}/submit`, {
+		const submitRes = await app.handle(new Request('http://localhost/submit', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
@@ -106,7 +106,7 @@ expect(clue2).toBeDefined();
 				clueId: clue2.id,
 				answer: answer2
 			})
-		});
+		}));
 
 		const submitData = await submitRes.json();
 		results.push({
@@ -122,36 +122,36 @@ expect(clue2).toBeDefined();
 
 	it('should solve clue 3: multiply game_indices count by HP stat', async () => {
 		// Re-submit previous answers to get to clue 3
-// Solve clue 1 to get clue 2
-const clue1Res = await fetch(`${BASE_URL}/submit`, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    mysteryId: mystery.mysteryId,
-    clueId: mystery.currentClue.id,
-    answer: 'boldore'
-  })
-});
-const clue1Data = await clue1Res.json();
-const clue2 = clue1Data.nextClue;
+		// Solve clue 1 to get clue 2
+		const clue1Res = await app.handle(new Request('http://localhost/submit', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				mysteryId: mystery.mysteryId,
+				clueId: mystery.currentClue.id,
+				answer: 'boldore'
+			})
+		}));
+		const clue1Data = await clue1Res.json();
+		const clue2 = clue1Data.nextClue;
 
-// Get Boldore data
-const boldoreRes = await fetch(`${POKEAPI_BASE}/pokemon/boldore`);
-const boldoreData = await boldoreRes.json();
-const gameIndicesCount = boldoreData.game_indices.length;
+		// Get Boldore data
+		const boldoreRes = await fetch(`${POKEAPI_BASE}/pokemon/boldore`);
+		const boldoreData = await boldoreRes.json();
+		const gameIndicesCount = boldoreData.game_indices.length;
 
-// Solve clue 2 to get clue 3
-const clue2Res = await fetch(`${BASE_URL}/submit`, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    mysteryId: mystery.mysteryId,
-    clueId: clue2.id,  // Use clue2.id, not mystery.currentClue.id
-    answer: gameIndicesCount.toString()
-  })
-});
-const clue2Data = await clue2Res.json();
-const clue3 = clue2Data.nextClue;
+		// Solve clue 2 to get clue 3
+		const clue2Res = await app.handle(new Request('http://localhost/submit', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				mysteryId: mystery.mysteryId,
+				clueId: clue2.id, // Use clue2.id, not mystery.currentClue.id
+				answer: gameIndicesCount.toString()
+			})
+		}));
+		const clue2Data = await clue2Res.json();
+		const clue3 = clue2Data.nextClue;
 
 		expect(clue3).toBeDefined();
 
@@ -165,7 +165,7 @@ const clue3 = clue2Data.nextClue;
 		const finalAnswer = (gameIndicesCount * hpValue).toString();
 
 		// Submit final answer
-		const submitRes = await fetch(`${BASE_URL}/submit`, {
+		const submitRes = await app.handle(new Request('http://localhost/submit', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
@@ -173,7 +173,7 @@ const clue3 = clue2Data.nextClue;
 				clueId: clue3.id,
 				answer: finalAnswer
 			})
-		});
+		}));
 
 		const submitData = await submitRes.json();
 		results.push({

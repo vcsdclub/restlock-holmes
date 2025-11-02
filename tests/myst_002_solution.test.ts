@@ -3,8 +3,8 @@
  */
 
 import { describe, it, expect, beforeAll } from 'vitest';
+import app from '../src/routes/[...slugs]/index.ts';
 
-const BASE_URL = 'http://localhost:5173';
 const DOG_API_BASE = 'https://dog.ceo/api';
 
 interface TestResult {
@@ -19,7 +19,7 @@ describe('Mystery 002: The Dog Breed Mystery', () => {
 
 	beforeAll(async () => {
 		// Get the mystery with easy difficulty
-		const mysteryRes = await fetch(`${BASE_URL}/mystery?mysteryId=myst_002`);
+		const mysteryRes = await app.handle(new Request('http://localhost/mystery?mysteryId=myst_002'));
 		const mysteryData = await mysteryRes.json();
 		mystery = mysteryData;
 	});
@@ -43,7 +43,7 @@ describe('Mystery 002: The Dog Breed Mystery', () => {
 		const answer1 = houndSubBreeds.length.toString();
 
 		// Submit answer
-		const submitRes = await fetch(`${BASE_URL}/submit`, {
+		const submitRes = await app.handle(new Request('http://localhost/submit', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
@@ -51,7 +51,7 @@ describe('Mystery 002: The Dog Breed Mystery', () => {
 				clueId: mystery.currentClue.id,
 				answer: answer1
 			})
-		});
+		}));
 
 		const submitData = await submitRes.json();
 		results.push({
@@ -71,7 +71,7 @@ describe('Mystery 002: The Dog Breed Mystery', () => {
 		const houndSubBreeds = breedsData.message.hound;
 
 		// Re-submit clue 1 to get clue 2
-		const clue1Res = await fetch(`${BASE_URL}/submit`, {
+		const clue1Res = await app.handle(new Request('http://localhost/submit', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
@@ -79,7 +79,7 @@ describe('Mystery 002: The Dog Breed Mystery', () => {
 				clueId: mystery.currentClue.id,
 				answer: houndSubBreeds.length.toString()
 			})
-		});
+		}));
 		const clue1Data = await clue1Res.json();
 		const clue2 = clue1Data.nextClue;
 
@@ -92,7 +92,7 @@ describe('Mystery 002: The Dog Breed Mystery', () => {
 		expect(sortedHounds.length).toBeGreaterThan(0);
 
 		// Submit answer
-		const submitRes = await fetch(`${BASE_URL}/submit`, {
+		const submitRes = await app.handle(new Request('http://localhost/submit', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
@@ -100,7 +100,7 @@ describe('Mystery 002: The Dog Breed Mystery', () => {
 				clueId: clue2.id,
 				answer: answer2
 			})
-		});
+		}));
 
 		const submitData = await submitRes.json();
 		results.push({ clueId: clue2.id, answer: answer2, correct: submitData.correct });
@@ -116,7 +116,7 @@ describe('Mystery 002: The Dog Breed Mystery', () => {
 		const houndSubBreeds = breedsData.message.hound;
 
 		// Re-submit clues 1 and 2 to get clue 3
-		await fetch(`${BASE_URL}/submit`, {
+		await app.handle(new Request('http://localhost/submit', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
@@ -124,12 +124,12 @@ describe('Mystery 002: The Dog Breed Mystery', () => {
 				clueId: mystery.currentClue.id,
 				answer: houndSubBreeds.length.toString()
 			})
-		});
+		}));
 
 		const sortedHounds = [...houndSubBreeds].sort();
 		const answer2 = sortedHounds[0];
 
-		const clue2Res = await fetch(`${BASE_URL}/submit`, {
+		const clue2Res = await app.handle(new Request('http://localhost/submit', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
@@ -137,10 +137,10 @@ describe('Mystery 002: The Dog Breed Mystery', () => {
 				clueId: mystery.currentClue.id,
 				answer: houndSubBreeds.length.toString()
 			})
-		});
+		}));
 		const clue2Data = await clue2Res.json();
 
-		const submitClue2Res = await fetch(`${BASE_URL}/submit`, {
+		const submitClue2Res = await app.handle(new Request('http://localhost/submit', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
@@ -148,7 +148,7 @@ describe('Mystery 002: The Dog Breed Mystery', () => {
 				clueId: clue2Data.nextClue.id,
 				answer: answer2
 			})
-		});
+		}));
 		const submitClue2Data = await submitClue2Res.json();
 		const clue3 = submitClue2Data.nextClue;
 
@@ -158,7 +158,7 @@ describe('Mystery 002: The Dog Breed Mystery', () => {
 		const answer3 = answer2.length.toString();
 
 		// Submit final answer
-		const submitRes = await fetch(`${BASE_URL}/submit`, {
+		const submitRes = await app.handle(new Request('http://localhost/submit', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
@@ -166,7 +166,7 @@ describe('Mystery 002: The Dog Breed Mystery', () => {
 				clueId: clue3.id,
 				answer: answer3
 			})
-		});
+		}));
 
 		const submitData = await submitRes.json();
 		results.push({ clueId: clue3.id, answer: answer3, correct: submitData.correct });
