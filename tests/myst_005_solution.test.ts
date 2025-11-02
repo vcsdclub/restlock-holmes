@@ -112,16 +112,6 @@ describe('Mystery 005: The Continental Capitals', () => {
 		const answer1 = countryData[0].capital[0];
 		const answer2 = answer1.length.toString();
 
-		await fetch(`${BASE_URL}/submit`, {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				mysteryId: mystery.mysteryId,
-				clueId: mystery.currentClue.id,
-				answer: answer1
-			})
-		});
-
 		const clue1Res = await fetch(`${BASE_URL}/submit`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },

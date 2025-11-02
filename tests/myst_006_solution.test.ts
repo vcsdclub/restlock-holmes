@@ -120,16 +120,6 @@ describe('Mystery 006: The Random Identity Generator', () => {
 		const answer1 = user.gender;
 		const answer2 = user.nat;
 
-		await fetch(`${BASE_URL}/submit`, {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				mysteryId: mystery.mysteryId,
-				clueId: mystery.currentClue.id,
-				answer: answer1
-			})
-		});
-
 		const clue1Res = await fetch(`${BASE_URL}/submit`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },

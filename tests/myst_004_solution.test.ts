@@ -119,16 +119,6 @@ describe('Mystery 004: The Interdimensional Character Count', () => {
 		const charactersData = await charactersRes.json();
 		const answer1 = charactersData.results.length.toString();
 
-		await fetch(`${BASE_URL}/submit`, {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				mysteryId: mystery.mysteryId,
-				clueId: mystery.currentClue.id,
-				answer: answer1
-			})
-		});
-
 		const rickRes = await fetch(`${RICK_MORTY_API_BASE}/character/1`);
 		const rickData = await rickRes.json();
 		const answer2 = rickData.episode.length.toString();
