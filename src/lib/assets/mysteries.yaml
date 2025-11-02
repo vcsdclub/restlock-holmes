@@ -91,3 +91,96 @@ mysteries:
           - "Count the letters in 'Chelsey'."
           - 'C-h-e-l-s-e-y = 7 letters.'
     conclusion: 'Outstanding detective work! You navigated through the JSONPlaceholder API like a pro. Chelsey Dietrich (user #5) was the key to unlocking this mystery!'
+
+  - id: myst_004
+    title: 'The Interdimensional Character Count'
+    difficulty: medium
+    scenario: 'A scientist from another dimension left behind encrypted data about the Rick and Morty universe. Follow the clues to decode their message...'
+    clues:
+      - id: clue_001
+        text: "First, find all characters with status 'Alive' from the Rick and Morty API. How many are there on the first page? (Don't fetch all pages, just the first one with default pagination)"
+        apiHint: 'The Rick and Morty API (https://rickandmortyapi.com/documentation) provides character data. Check the info object in the response.'
+        answer: '20'
+        hints:
+          - 'Use the endpoint: https://rickandmortyapi.com/api/character/?status=alive'
+          - 'Look at the results array length, not the total count in info.'
+          - 'The first page returns 20 results by default.'
+      - id: clue_002
+        text: "Good! Now get character with ID 1 (Rick Sanchez). Count how many episodes Rick appears in. What's the count?"
+        apiHint: 'Use the /character/{id} endpoint to get character details including episode appearances.'
+        answer: '51'
+        hints:
+          - 'Use: https://rickandmortyapi.com/api/character/1'
+          - "Look for the 'episode' array in the response."
+          - 'Count the number of URLs in that array.'
+      - id: clue_003
+        text: "Perfect! Now take the episode count (51) and divide it by the number of results on the first page (20). Round DOWN to the nearest integer. What's your final answer?"
+        apiHint: 'Simple math: floor(51 / 20)'
+        answer: '2'
+        hints:
+          - 'Calculate 51 divided by 20 = 2.55'
+          - 'Round down to nearest integer using Math.floor() or similar.'
+          - 'The answer is 2.'
+    conclusion: "Brilliant work, detective! You've successfully decoded the interdimensional message. Rick Sanchez's episode dominance ratio of 2 proves he's the real deal across the multiverse!"
+
+  - id: myst_005
+    title: 'The Continental Capitals'
+    difficulty: easy
+    scenario: 'An international spy left clues hidden in country data. Can you track down the secret location?'
+    clues:
+      - id: clue_001
+        text: 'Find the country with the alpha2Code "DE" (Germany). What is its capital city?'
+        apiHint: 'REST Countries API (https://restcountries.com) provides detailed country information. Use the alpha code endpoint.'
+        answer: 'Berlin'
+        hints:
+          - 'Use: https://restcountries.com/v3.1/alpha/DE'
+          - "Look for the 'capital' field in the response array."
+          - "The capital is 'Berlin'."
+      - id: clue_002
+        text: "Great! Now count how many letters are in 'Berlin'. What's the count?"
+        apiHint: 'Simple string length calculation.'
+        answer: '6'
+        hints:
+          - "Count the characters in 'Berlin'."
+          - 'B-e-r-l-i-n = 6 letters.'
+      - id: clue_003
+        text: "Perfect! Now find Germany's population (in the same API response). Divide it by 1 million and round DOWN to the nearest integer. What's your answer?"
+        apiHint: 'Look for the population field and do the math calculation.'
+        answer: '83'
+        hints:
+          - 'Use: https://restcountries.com/v3.1/alpha/DE'
+          - "Find the 'population' field."
+          - 'Divide by 1,000,000 and use Math.floor() to round down.'
+          - 'Germany has about 83+ million people.'
+    conclusion: 'Excellent detective work! You successfully tracked the spy through international data and decoded the population cipher!'
+
+  - id: myst_006
+    title: 'The Random Identity Generator'
+    difficulty: medium
+    scenario: 'A secret agent program left behind patterns in randomly generated identities. Analyze the data to find the pattern...'
+    clues:
+      - id: clue_001
+        text: 'Use the Random User API to generate 1 random user with seed "mystery006". What is the gender of this user?'
+        apiHint: 'Random User API (https://randomuser.me) generates fake user data. Use seed parameter for consistent results.'
+        answer: 'female'
+        hints:
+          - 'Use: https://randomuser.me/api/?seed=mystery006'
+          - "Look for the 'gender' field in the results array first element."
+          - 'The answer should be either male or female.'
+      - id: clue_002
+        text: "Good! Now get the user's nationality (nat field). What country code do you get?"
+        apiHint: 'Check the nat field in the same API response.'
+        answer: 'NZ'
+        hints:
+          - 'Use the same URL: https://randomuser.me/api/?seed=mystery006'
+          - "Find the 'nat' field in the results."
+          - 'It is a 2-letter country code.'
+      - id: clue_003
+        text: "Perfect! Now count the total number of characters in the user's full name (first name + last name, no spaces). What's your count?"
+        apiHint: "Concatenate the first and last name from the name object, remove spaces, and count."
+        answer: '11'
+        hints:
+          - "Get the name.first and name.last from the user object."
+          - 'Combine them without spaces and count the letters.'
+          - 'For seed mystery006, you should get a specific count.'
+    conclusion: "Outstanding work, detective! You've successfully reverse-engineered the random identity pattern. The agent's cover has been blown!"
