@@ -91,3 +91,35 @@ mysteries:
           - "Count the letters in 'Chelsey'."
           - 'C-h-e-l-s-e-y = 7 letters.'
     conclusion: 'Outstanding detective work! You navigated through the JSONPlaceholder API like a pro. Chelsey Dietrich (user #5) was the key to unlocking this mystery!'
+
+
+  - id: myst_004
+    title: 'The *Undefeated* Pokemon'
+    difficulty: easy
+    scenario: 'You are up against a pokemon that seems to be tanking all your moves. How do you defeat it?'
+    clues:
+      - id: clue_001
+        text: 'What ability makes a pokemon invincible?'
+        apiHint: "You'll need to explore the PokeAPI (https://pokeapi.co/docs/v2) to solve this puzzle."
+        answer: 'Wonder Guard'
+        hints:
+          - 'You have not used a supereffective move yet'
+          - "Shedninga migth help."
+          - 'The answer is Wonder Guard.'
+      - id: clue_002
+        text: "Now fetch user Wonder Guard's entry. What is Version_Group name variable?"
+        apiHint: 'Use the /users endpoint to get user information.'
+        answer: 'Use the PokéAPI /ability/{name} endpoint to get detailed information.'
+        hints:
+          - 'Make sure that everything in the effect changes is expanded.'
+          - "Look at the second drop down menu."
+          - 'Its under version group.'
+          - 'Make sure to get the case exactly right as the variable says.'
+      - id: clue_003
+        text: "Perfect! Now what move is specifically mentioned in the effect changes?"
+        apiHint: 'Look at the changes under effect entries.'
+        answer: 'fire fang'
+        hints:
+          - "Look under effect entries --> 1."
+          - 'fire fang -- watch the case!'
+    conclusion: 'Arcanine used Fire fang! Its super effective! The opposing Shedinja fainted!'
