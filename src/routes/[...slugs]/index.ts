@@ -65,8 +65,8 @@ This API teaches you:
 				},
 				servers: [
 					{
-						url: 'http://localhost:3000',
-						description: 'Local development server'
+						url: 'https://restlock-holmes.vercel.app',
+						description: 'Production server'
 					}
 				],
 				tags: [
@@ -598,7 +598,7 @@ This API teaches you:
 					{
 						description: 'Step 1: Get a mystery to solve',
 						code: toCode`// Get a random mystery
-const response = await fetch('http://localhost:3000/mystery');
+const response = await fetch('https://restlock-holmes.vercel.app/mystery');
 const mystery = await response.json();
 
 console.log(mystery.title);
@@ -620,7 +620,7 @@ console.log('My answer:', answer);`
 					{
 						description: 'Step 3: Submit your answer',
 						code: toCode`// Submit your answer
-const submitResponse = await fetch('http://localhost:3000/submit', {
+const submitResponse = await fetch('https://restlock-holmes.vercel.app/submit', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
@@ -643,14 +643,14 @@ if (result.correct && result.nextClue) {
 						description: "Optional: Get a hint if you're stuck",
 						code: toCode`// Get the first hint (no index parameter)
 const hintResponse = await fetch(
-  \`http://localhost:3000/hint?mysteryId=\${mystery.mysteryId}&clueId=\${mystery.firstClue.id}\`
+  \`https://restlock-holmes.vercel.app/hint?mysteryId=\${mystery.mysteryId}&clueId=\${mystery.firstClue.id}\`
 );
 const hintData = await hintResponse.json();
 console.log('Hint:', hintData.hint);
 
 // Get a specific hint by index (e.g., second hint)
 const hint2Response = await fetch(
-  \`http://localhost:3000/hint?mysteryId=\${mystery.mysteryId}&clueId=\${mystery.firstClue.id}&index=1\`
+  \`https://restlock-holmes.vercel.app/hint?mysteryId=\${mystery.mysteryId}&clueId=\${mystery.firstClue.id}&index=1\`
 );
 const hint2Data = await hint2Response.json();
 console.log('Hint 2:', hint2Data.hint);`
@@ -661,7 +661,7 @@ console.log('Hint 2:', hint2Data.hint);`
 					description: 'Complete example: Solving a mystery',
 					code: toCode`async function solveMystery() {
   // 1. Get mystery
-  const mystery = await fetch('http://localhost:3000/mystery')
+  const mystery = await fetch('https://restlock-holmes.vercel.app/mystery')
     .then(r => r.json());
 
   console.log('Mystery:', mystery.title);
@@ -678,7 +678,7 @@ console.log('Hint 2:', hint2Data.hint);`
   const answer = dogData.message.hound.length.toString();
 
   // 5. Submit answer
-  const result = await fetch('http://localhost:3000/submit', {
+  const result = await fetch('https://restlock-holmes.vercel.app/submit', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
