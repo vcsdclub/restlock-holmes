@@ -5,8 +5,11 @@ This directory contains test files that also serve as example solutions for each
 ## Running Tests
 
 ```bash
-# Run all mystery tests
-bun test
+# Install the verified Bun build with patched CA trust.
+node scripts/install-secure-bun.mjs .tools/bun
+
+# Run all mystery tests. These make real HTTPS calls to public APIs.
+npm test
 ```
 
 ## Test Files
