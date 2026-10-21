@@ -74,11 +74,15 @@ Real skills developers use every day:
 # Clone the repository
 git clone https://github.com/vcsdclub/restlock-holmes.git
 
-# Install dependencies
-bun install
+# Use Node 22.23.4, 24.22.1, or 26.12.1 (or a newer patched release).
+# npm and package-lock.json are authoritative.
+npm ci
+
+# Install the integrity-pinned Bun build used by the external API tests.
+node scripts/install-secure-bun.mjs .tools/bun
 
 # Start the server
-bun run dev
+npm run dev
 
 # API runs at http://localhost:3000
 # Docs at http://localhost:3000/openapi
