@@ -5,10 +5,7 @@ This directory contains test files that also serve as example solutions for each
 ## Running Tests
 
 ```bash
-# Install the verified Bun build with patched CA trust.
-node scripts/install-secure-bun.mjs .tools/bun
-
-# Run all mystery tests. These make real HTTPS calls to public APIs.
+# Requires Bun 1.4.4 or newer. Run all mystery tests. These make real HTTPS calls to public APIs.
 npm test
 ```
 
