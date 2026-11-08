@@ -74,12 +74,8 @@ Real skills developers use every day:
 # Clone the repository
 git clone https://github.com/vcsdclub/restlock-holmes.git
 
-# Use Node 22.23.4, 24.22.1, or 26.12.1 (or a newer patched release).
-# npm and package-lock.json are authoritative.
+# Use Node 22.23.4+ or 24.22.1+. npm and package-lock.json are authoritative.
 npm ci
-
-# Install the integrity-pinned Bun build used by the external API tests.
-node scripts/install-secure-bun.mjs .tools/bun
 
 # Start the server
 npm run dev
